@@ -4,7 +4,9 @@
 **Versão do plano:** 1.0
 **Data:** 07/11/2026
 **Referência:** GDD v0.6, seção 16.4
-**Status:** **[PROTÓTIPO]** — plano **aprovado pelo criador** em 07/11/2026, incluindo a pasta `prototipos/p0-multitouch/`. Implementação aguarda missão específica.
+**Status:** **[PROTÓTIPO]** — plano aprovado em 07/11/2026 · **implementado** em 07/11/2026 (`prototipos/p0-multitouch/`) · testes automatizados executados · **testes em celulares reais: NÃO EXECUTADOS** (ver seção 9).
+**Atualização (08/11/2026):** o criador informou que o P0 foi testado na prática e funciona corretamente; os números não foram registrados no `RESULTADOS.md` do P0. Próximo protótipo, **P1 — primeiro ciclo de pesca**, implementado: ver seção 10.
+**Revisão criativa (08/11/2026):** as decisões D1–D10 do P1 foram aprovadas pela direção criativa (GDD, seção 16.6). **Patch 01 (08/11/2026):** D2, D3, D4, D7, D8 e D9 foram implementados e validados automaticamente; nada foi validado em aparelho físico. Ver seção 11.0.
 
 ---
 
@@ -221,3 +223,141 @@ Preparação para teste futuro (fora do escopo do Protótipo 0): o painel de dia
 ## 8. Estimativa de esforço
 
 Pequena. O protótipo cabe em poucos arquivos curtos. O maior custo de tempo está nos **testes em aparelhos reais**, não na programação.
+
+---
+
+## 9. Situação da implementação (07/11/2026)
+
+### 9.1. Estado
+
+| Etapa | Situação |
+|---|---|
+| Implementação | **Concluída** em `prototipos/p0-multitouch/` |
+| Testes automatizados da lógica | **18 de 18** passaram |
+| Testes automatizados no navegador (multitouch simulado, Chromium) | **30 de 30** passaram |
+| Testes em celulares reais (seção 5) | **Não executados** |
+| Critérios de sucesso (seção 6) | **Não avaliados**: dependem dos testes reais |
+
+Detalhes: `prototipos/p0-multitouch/RESULTADOS.md`. Instruções: `prototipos/p0-multitouch/README.md`.
+
+### 9.2. Diferenças em relação ao plano (sem mudança de escopo)
+
+| Item do plano | Implementado | Motivo |
+|---|---|---|
+| `src/input/PlayerZone.js` como único módulo de entrada | Dividido em `PlayerZone.js` (estado de uma zona) e `TouchRouter.js` (posse, cancelamentos, registro) | Separar responsabilidades e permitir testes sem navegador |
+| Painel dentro de `MultitouchTestScene.js` | Extraído para `src/ui/DiagnosticsPanel.js` e `src/ui/TestMenu.js` | Cena menor e mais legível |
+| Botão "zerar contadores" no painel | Menu HTML "☰ TESTES" com roteiro dos 10 testes, limiar ajustável, tela cheia e relatório copiável | Permite executar e documentar os testes no próprio celular |
+| — | `tests/logica.test.js` (Node, sem dependências) e `tests/e2e-navegador.js` (opcional, requer Playwright) | Evidência automatizada |
+| — | `README.md`, `lib/PHASER-LICENSE.md` | Instruções e licença da biblioteca |
+| Mini-teste de reação (opcional) | **Não implementado** | Evitar antecipar a mecânica de fisgada, fora do escopo |
+| Versão do Phaser "estável fixada" | **Phaser 3.90.0** (último da linha 3) | O GDD define Phaser 3; já existe Phaser 4, não adotado |
+| Limiar toque × segurar "150–250 ms" | 200 ms inicial, ajustável de 100 a 500 ms no menu | Calibrar no celular |
+
+### 9.3. Comportamentos técnicos descobertos
+- O Phaser 3.90 entrega o cancelamento do sistema como `pointerup` com `pointer.wasCanceled = true`.
+- O Phaser também cria ponteiros para toques que começam **fora do canvas** (evento `pointerdownoutside`). Sem tratamento, isso gerava erros falsos. Esses toques agora são ignorados.
+- Ao receber `touchcancel`, o Phaser tenta bloquear um evento não bloqueável, e o navegador registra um aviso no console. É inofensivo.
+
+---
+
+## 10. Sequência de protótipos — P1: primeiro ciclo de pesca
+
+**Data:** 08/11/2026 · **Missão:** "HANGOVER FISHING — MISSÃO P1" · **Pasta:** `prototipos/p1-pesca/` · **GDD:** seção 16.5
+
+### 10.1. Sequência
+
+| Protótipo | Pergunta | Situação |
+|---|---|---|
+| **P0** — multitouch | Duas pessoas conseguem tocar e segurar ao mesmo tempo, sem interferência? | Implementado; segundo o criador, funciona em celular real |
+| **P1** — primeiro ciclo de pesca | Dois jogadores conseguem pescar ao mesmo tempo, de forma independente, com um ciclo compreensível? | **Implementado** · automatizados ✔ · **celular real: não executado** |
+| Próximos (a definir) | Restante da Fase A (pontuação completa) e Fase B | Aguardam o resultado do P1 em celular e uma nova missão |
+
+### 10.2. O que foi reaproveitado do P0
+
+| Módulo do P0 | No P1 |
+|---|---|
+| `src/input/PlayerZone.js`, `src/input/TouchRouter.js` | **Cópias idênticas** (o teste R5 confere byte a byte) |
+| `src/scenes/OrientationScene.js` | Cópia idêntica |
+| `lib/phaser.min.js` (3.90.0) | Mesma cópia |
+| `style.css` e proteções de gestos do `main.js` | Mesmas regras, com estilos novos para o menu e o painel |
+| Ponte Phaser → TouchRouter da cena de teste | Mesmo código, em `FishingScene.js` |
+| Rede de segurança (`reconcile`) e interrupções (`cancelAll`) | Mantidas; agora também pausam a pescaria |
+
+Nada no P0 foi alterado.
+
+### 10.3. Arquitetura do P1
+
+`TouchRouter` (P0) → `FishingSession` → um `FishingPlayer` por jogador (máquina de estados, tensão, peixe e **gerador aleatório próprio**). A cena só desenha a partir de `snapshot()`. A lógica não depende do Phaser e é testada no Node. Detalhes: `prototipos/p1-pesca/README.md`, seção 3.
+
+### 10.4. Riscos técnicos novos
+
+| # | Risco | Mitigação no P1 |
+|---|---|---|
+| R13 | Um jogador influenciar os sorteios do outro (gerador aleatório compartilhado) | Um gerador por jogador; o teste 11a compara as pescarias evento por evento |
+| R14 | Toque antes da mordida "guardado" e virando fisgada | Só um **novo** toque iniciado depois do sinal fisga (testes 3a–3c) |
+| R15 | Resultado diferente conforme o FPS do aparelho | Simulação em passo fixo de 10 ms |
+| R16 | Perder o peixe por interrupção do sistema | O tempo parado não conta; menu, retrato e página oculta pausam; travadas acima de 0,25 s são descontadas. **Lacuna (revisão 08/11/2026):** a perda de foco sem ocultar a página só encerrava os toques e não pausava. **Corrigida no Patch 01** (seção 11.0): `blur`, `visibilitychange`, `pagehide` e `freeze` congelam a pescaria até um toque. Interrupções que o navegador não sinaliza continuam indetectáveis |
+| R17 | Áudio bloqueado até o primeiro toque; vibração inexistente no iPhone | O som é liberado no primeiro toque; o feedback visual nunca depende de som ou vibração |
+| R18 | Rotação: o Phaser não reaplica a escala (visto na emulação de celular do Edge, também no P0) | `scale.refresh()` forçado após girar, só no P1; verificar no caso B11 |
+
+### 10.5. Testes e critérios
+- Automatizados: **35/35** (lógica) e **22/22** (navegador, multitouch simulado no Edge) na entrega inicial; **48/48** e **36/36** após o Patch 01. Simulação de balanceamento registrada (inalterada pelo patch).
+- Celular real: roteiro B1–B14 e critérios da missão em `prototipos/p1-pesca/RESULTADOS.md` (Parte B). **Não executados.**
+
+---
+
+## 11. Ajustes pendentes do P1 — plano de implementação futura
+
+**Origem:** revisão de direção criativa de 08/11/2026 (GDD, seção 16.6).
+**Situação na revisão (histórico):** nenhum destes ajustes estava implementado. As tabelas 11.1 a 11.3 abaixo mantêm a lista original. **A situação atual está em 11.0.**
+
+### 11.0. Situação após o Patch 01 (08/11/2026)
+
+Missão "P1 PATCH 01 — Correções de gameplay e interrupções". A correção da perda de foco (D8) recebeu **prioridade máxima** na missão.
+
+| Decisão | Aprovado | Implementado | Validado automaticamente | Validado em aparelho físico | Pendente |
+|---|---|---|---|---|---|
+| **D8** pausas e interrupções | ✔ | **✔ Patch 01**, dentro dos limites do navegador | ✔ lógica P01-1 a P01-5; navegador (blur e página oculta **simulados**) | ✘ | B11 em aparelho real; interrupções que o navegador não sinaliza continuam indetectáveis |
+| **D4** espera preservada | ✔ | **✔ Patch 01** | ✔ P01-6, P01-6b | ✘ | B5, B9 |
+| **D3** beliscadas sem som | ✔ | **✔ Patch 01** | ✔ P01-7, P01-8 | ✘ | B5 |
+| **D7** cartões unificados | ✔ | **✔ Patch 01** | ✔ P01-9, P01-10 | ✘ | B10 |
+| **D2** aviso do arremesso cancelado | ✔ | **✔ Patch 01** | ✔ P01-11; navegador | ✘ | B10 |
+| **D9** vibração desligada por padrão | ✔ | **✔ Patch 01** | ✔ P01-12; navegador | ✘ | B6, B14 |
+| **D1** recompensa por distância | ✔ | ✘ (só o medidor cíclico) | — | ✘ | Definição de balanceamento + implementação |
+| **D5** legibilidade do risco | ✔ | Mecânica ✔; reforço visual ✘ (condicionado) | ✔ (mecânica) | ✘ | Só se B7/B8/B13 mostrarem confusão |
+| **D6** resposta imediata | ✔ | ✔ (sem mudança) | ✔ | ✘ | — |
+| **D10** câmera lateral | ✔ | Não se aplica ao P1 | — | — | Etapa futura de layout lateral |
+
+**Testes após o patch:** lógica do P1 **48/48**; navegador **36/36**; P0 **18/18** (sem alteração).
+
+**Como o D8 foi resolvido:** a pausa passou a ser da **sessão** (`FishingSession.pause/resume/interrupt`), não da cena. Uma interrupção encerra os toques e depois congela os dois jogadores (`FishingPlayer.pause/resume`), deslocando todos os prazos pelo tempo parado. Eventos usados: `blur`, `visibilitychange`, `pagehide`, `pageshow` (restauração do cache) e `freeze`. A retomada exige um toque na tela, que é consumido. O menu e a orientação retrato pausam e retomam sozinhos. Limites reais: `prototipos/p1-pesca/README.md`, seção 6.
+
+### 11.1. Prioridade alta
+
+| # | Decisão | Ajuste pendente | Comportamento atual | Onde no código (referência) | Como verificar depois |
+|---|---|---|---|---|---|
+| 1 | **D4** | Ao interromper o recolhimento vazio, **retomar o tempo de espera que faltava**, em vez de sortear outro. Garantir que nenhum toque prematuro gere penalidade escondida | Sorteia uma espera nova ao soltar no meio do recolhimento | `FishingPlayer.release()`, caso `REELING_EMPTY` (chama `_scheduleBite`) | Teste automático novo (espera restante preservada); B5 e B9 |
+| 2 | **D3** | **Remover o bipe** das beliscadas (exclusivamente visuais). Conferir que a mordida continua com sinal visual e sonoro distinto | Bipe curto e baixo em cada beliscada | `Sfx.onEvent`, caso `beliscada`; comentário em `config.js` | B5 e B6 |
+| 3 | **D7** | **Unificar o avanço dos cartões**: após 0,6 s, um novo toque avança qualquer cartão, inclusive o de mordida perdida (o toque continua registrado para medir reação, se for útil) | O cartão de mordida perdida não avança; o toque é contado como "atrasado" | `FishingPlayer.press()`, casos de resultado; `FishingScene.drawResult` (aviso "segure para arremessar de novo") | Ajustar o teste 12c; B10 |
+| 4 | **D2** | **Feedback visual breve** quando o arremesso é cancelado por toque curto (ex.: "SEGURE PARA ARREMESSAR!"), sem interromper o ritmo | Nada aparece na tela; só o registro `arremesso-cancelado` | `FishingScene` (reagir ao evento `arremesso-cancelado`) | Captura de tela; B1, B2, B10 |
+
+### 11.2. Prioridade média
+
+| # | Decisão | Ajuste pendente | Observação |
+|---|---|---|---|
+| 5 | **D1** | **Recompensa por distância**: curto = mais acessível e rápido, peixes tendem a ser menores; médio = equilíbrio; longo = chance de peixes maiores e mais interessantes, briga potencialmente mais difícil | A relação exata (espécies, peso, espera, resistência) precisa de **definição de balanceamento pela direção criativa** antes de implementar. Hoje a distância só alonga a briga, o que desestimula arremessos longos |
+| 6 | **D9** | **Vibração desligada por padrão**, com opção de ligar no menu | Hoje começa ligada (`main.js`: `toggles.vibracao` e `setToggle('vibracao', true)`; `index.html`: `aria-pressed="true"`; `Sfx.vibration = true`) |
+| 7 | **D5** | **Avaliar a legibilidade do risco acumulado**; reforçar o indicador **somente se** o teste físico mostrar confusão | Depende de B7, B8 e B13. Sem mudança de código até lá |
+| 8 | **D8** | **Documentar pausas e travadas**: feito nesta revisão (GDD 16.5/16.6; R16). **Pendência de código encontrada na revisão:** a **perda de foco** sem ocultar a página não pausa a pescaria | Recomendação técnica: tratar no próximo lote. A decisão D8 exige que a pausa não cause perda injusta, e essa lacuna pode fazer o peixe escapar com o painel de notificações aberto. **A prioridade é decisão da direção criativa**; foi mantida como média, conforme a missão |
+
+### 11.3. Mantidos sem alteração prevista
+
+| Decisão | Situação |
+|---|---|
+| **D6** | Resposta imediata na briga, sem o limiar de 200 ms. Já implementada conforme aprovado |
+| **D10** | Câmera lateral 2D continua a direção visual oficial. O layout "de frente" do P1 é experimental. **Etapa futura:** adaptação e validação do layout lateral para dois jogadores, antes de qualquer arte final (a planejar em missão própria) |
+
+### 11.4. Regras para a futura implementação
+- Preservar o P0 e os módulos de entrada copiados dele (teste R5).
+- Cada ajuste vem acompanhado de teste automatizado e atualização de `README.md`, `RESULTADOS.md` e GDD 16.6 (coluna "Implementação").
+- Os testes físicos (B1–B14) podem ser feitos **antes** destes ajustes. Nesse caso, registrar no `RESULTADOS.md` que foi testada a versão de 08/11/2026, com os comportamentos atuais (bipe nas beliscadas, vibração ligada etc.).

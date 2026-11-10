@@ -1,0 +1,1266 @@
+{
+  "animacao": "reel_fight",
+  "quadro": {
+    "largura": 96,
+    "altura": 96
+  },
+  "spritesheet": {
+    "arquivo": "<personagem>_reel_fight_spritesheet.png",
+    "largura": 384,
+    "altura": 384,
+    "colunas": 4,
+    "linhas": 4,
+    "organizacao": "cada linha é um nível de tensão (1 a 4, de cima para baixo); cada coluna é uma posição da manivela (1 cima, 2 frente, 3 baixo, 4 trás)",
+    "indice": "indice (0–15) = (nivel − 1) × 4 + (posicao − 1); quadro (1–16) = indice + 1"
+  },
+  "ancora": {
+    "phaserOrigin": [
+      0.5,
+      1
+    ],
+    "deslocamentoV4": [
+      30,
+      32
+    ],
+    "solaY": 94,
+    "pes": {
+      "x0": 39,
+      "x1": 56,
+      "y0": 91,
+      "y1": 95
+    },
+    "centroPesX": 47.5
+  },
+  "niveis": [
+    {
+      "nivel": 1,
+      "nome": "linha frouxa",
+      "zonaDeTensaoP1": "REELING_EMPTY ou FROUXA (tensão < 0,20)",
+      "quadros": [
+        1,
+        4
+      ],
+      "indices": [
+        0,
+        3
+      ],
+      "quedaDaPontaPx": 0,
+      "inclinacaoTroncoPx": 0
+    },
+    {
+      "nivel": 2,
+      "nome": "tensão segura",
+      "zonaDeTensaoP1": "SEGURA (0,20 a 0,65)",
+      "quadros": [
+        5,
+        8
+      ],
+      "indices": [
+        4,
+        7
+      ],
+      "quedaDaPontaPx": 3,
+      "inclinacaoTroncoPx": 0
+    },
+    {
+      "nivel": 3,
+      "nome": "alerta",
+      "zonaDeTensaoP1": "ALERTA (0,65 a 0,85)",
+      "quadros": [
+        9,
+        12
+      ],
+      "indices": [
+        8,
+        11
+      ],
+      "quedaDaPontaPx": 7,
+      "inclinacaoTroncoPx": -1
+    },
+    {
+      "nivel": 4,
+      "nome": "crítica",
+      "zonaDeTensaoP1": "CRÍTICA (0,85 ou mais)",
+      "quadros": [
+        13,
+        16
+      ],
+      "indices": [
+        12,
+        15
+      ],
+      "quedaDaPontaPx": 12,
+      "inclinacaoTroncoPx": -2
+    }
+  ],
+  "selecaoDoNivel": {
+    "fonte": "zona de tensão do P1 (config.js: slackMax 0,20 · alertMin 0,65 · criticalMin 0,85)",
+    "regra": "tensão < 0,20 ou linha vazia (REELING_EMPTY) → 1 · 0,20 a < 0,65 → 2 · 0,65 a < 0,85 → 3 · ≥ 0,85 → 4",
+    "automatico": false,
+    "trocaDeNivel": "imediata, no quadro seguinte, preservando a posição da manivela (ex.: nível 2 posição 3 = quadro 7 → nível 3 posição 3 = quadro 11)"
+  },
+  "manivela": {
+    "posicoes": [
+      {
+        "posicao": 1,
+        "nome": "cima"
+      },
+      {
+        "posicao": 2,
+        "nome": "frente"
+      },
+      {
+        "posicao": 3,
+        "nome": "baixo"
+      },
+      {
+        "posicao": 4,
+        "nome": "trás"
+      }
+    ],
+    "msPorPosicao": 90,
+    "msPorVolta": 360,
+    "segurando": "loop das 4 posições do nível atual (1 → 2 → 3 → 4 → 1 …)",
+    "soltando": "a manivela para na posição atual; o nível continua acompanhando a tensão"
+  },
+  "fisgada": {
+    "quando": "transição BITE → FIGHTING do P1",
+    "nivel": 3,
+    "posicaoManivela": 1,
+    "quadro": 9,
+    "indice": 8,
+    "ms": 100,
+    "depois": "entra no nível indicado pela tensão, a partir da posição 1 da manivela (ou da posição 2, se o jogador já estiver segurando)",
+    "observacao": "não é uma animação separada: é o quadro 9 (nível 3, curva média) mostrado por ~100 ms"
+  },
+  "phaser": {
+    "carregar": "this.load.spritesheet('<personagem>_reel_fight', '<personagem>_reel_fight_spritesheet.png', { frameWidth: 96, frameHeight: 96 })",
+    "recomendacao": "quatro animações em loop (uma por nível, frames [n*4 .. n*4+3], 90 ms cada) ou escolha manual do frame pelo código; ao trocar de nível, manter a posição da manivela (índice % 4)"
+  },
+  "pontos": {
+    "alemao": [
+      {
+        "indice": 0,
+        "quadro": 1,
+        "nivel": 1,
+        "posicaoManivela": 1,
+        "manivela": "cima",
+        "pontaDaVara": [
+          78,
+          50
+        ],
+        "cabo": [
+          40,
+          72
+        ],
+        "maoDeTras": [
+          45,
+          69
+        ],
+        "maoDaFrente": [
+          54,
+          65
+        ],
+        "assentoDoMolinete": [
+          54,
+          64
+        ],
+        "cuboDoMolinete": [
+          54,
+          69
+        ],
+        "inclinacaoPx": 0,
+        "anguloCaboGraus": -61,
+        "quedaDaPontaPx": 0,
+        "flechaDaVaraPx": 0
+      },
+      {
+        "indice": 1,
+        "quadro": 2,
+        "nivel": 1,
+        "posicaoManivela": 2,
+        "manivela": "frente",
+        "pontaDaVara": [
+          78,
+          50
+        ],
+        "cabo": [
+          40,
+          72
+        ],
+        "maoDeTras": [
+          45,
+          69
+        ],
+        "maoDaFrente": [
+          58,
+          69
+        ],
+        "assentoDoMolinete": [
+          54,
+          64
+        ],
+        "cuboDoMolinete": [
+          54,
+          69
+        ],
+        "inclinacaoPx": 0,
+        "anguloCaboGraus": -61,
+        "quedaDaPontaPx": 0,
+        "flechaDaVaraPx": 0
+      },
+      {
+        "indice": 2,
+        "quadro": 3,
+        "nivel": 1,
+        "posicaoManivela": 3,
+        "manivela": "baixo",
+        "pontaDaVara": [
+          78,
+          50
+        ],
+        "cabo": [
+          40,
+          72
+        ],
+        "maoDeTras": [
+          45,
+          69
+        ],
+        "maoDaFrente": [
+          54,
+          73
+        ],
+        "assentoDoMolinete": [
+          54,
+          64
+        ],
+        "cuboDoMolinete": [
+          54,
+          69
+        ],
+        "inclinacaoPx": 0,
+        "anguloCaboGraus": -61,
+        "quedaDaPontaPx": 0,
+        "flechaDaVaraPx": 0
+      },
+      {
+        "indice": 3,
+        "quadro": 4,
+        "nivel": 1,
+        "posicaoManivela": 4,
+        "manivela": "trás",
+        "pontaDaVara": [
+          78,
+          50
+        ],
+        "cabo": [
+          40,
+          72
+        ],
+        "maoDeTras": [
+          45,
+          69
+        ],
+        "maoDaFrente": [
+          50,
+          69
+        ],
+        "assentoDoMolinete": [
+          54,
+          64
+        ],
+        "cuboDoMolinete": [
+          54,
+          69
+        ],
+        "inclinacaoPx": 0,
+        "anguloCaboGraus": -61,
+        "quedaDaPontaPx": 0,
+        "flechaDaVaraPx": 0
+      },
+      {
+        "indice": 4,
+        "quadro": 5,
+        "nivel": 2,
+        "posicaoManivela": 1,
+        "manivela": "cima",
+        "pontaDaVara": [
+          80,
+          52
+        ],
+        "cabo": [
+          40,
+          71
+        ],
+        "maoDeTras": [
+          45,
+          68
+        ],
+        "maoDaFrente": [
+          54,
+          64
+        ],
+        "assentoDoMolinete": [
+          54,
+          63
+        ],
+        "cuboDoMolinete": [
+          54,
+          68
+        ],
+        "inclinacaoPx": 0,
+        "anguloCaboGraus": -61,
+        "quedaDaPontaPx": 3,
+        "flechaDaVaraPx": 1.3
+      },
+      {
+        "indice": 5,
+        "quadro": 6,
+        "nivel": 2,
+        "posicaoManivela": 2,
+        "manivela": "frente",
+        "pontaDaVara": [
+          80,
+          52
+        ],
+        "cabo": [
+          40,
+          71
+        ],
+        "maoDeTras": [
+          45,
+          68
+        ],
+        "maoDaFrente": [
+          58,
+          68
+        ],
+        "assentoDoMolinete": [
+          54,
+          63
+        ],
+        "cuboDoMolinete": [
+          54,
+          68
+        ],
+        "inclinacaoPx": 0,
+        "anguloCaboGraus": -61,
+        "quedaDaPontaPx": 3,
+        "flechaDaVaraPx": 1.3
+      },
+      {
+        "indice": 6,
+        "quadro": 7,
+        "nivel": 2,
+        "posicaoManivela": 3,
+        "manivela": "baixo",
+        "pontaDaVara": [
+          80,
+          52
+        ],
+        "cabo": [
+          40,
+          71
+        ],
+        "maoDeTras": [
+          45,
+          68
+        ],
+        "maoDaFrente": [
+          54,
+          72
+        ],
+        "assentoDoMolinete": [
+          54,
+          63
+        ],
+        "cuboDoMolinete": [
+          54,
+          68
+        ],
+        "inclinacaoPx": 0,
+        "anguloCaboGraus": -61,
+        "quedaDaPontaPx": 3,
+        "flechaDaVaraPx": 1.3
+      },
+      {
+        "indice": 7,
+        "quadro": 8,
+        "nivel": 2,
+        "posicaoManivela": 4,
+        "manivela": "trás",
+        "pontaDaVara": [
+          80,
+          52
+        ],
+        "cabo": [
+          40,
+          71
+        ],
+        "maoDeTras": [
+          45,
+          68
+        ],
+        "maoDaFrente": [
+          50,
+          68
+        ],
+        "assentoDoMolinete": [
+          54,
+          63
+        ],
+        "cuboDoMolinete": [
+          54,
+          68
+        ],
+        "inclinacaoPx": 0,
+        "anguloCaboGraus": -61,
+        "quedaDaPontaPx": 3,
+        "flechaDaVaraPx": 1.3
+      },
+      {
+        "indice": 8,
+        "quadro": 9,
+        "nivel": 3,
+        "posicaoManivela": 1,
+        "manivela": "cima",
+        "pontaDaVara": [
+          79,
+          53
+        ],
+        "cabo": [
+          39,
+          71
+        ],
+        "maoDeTras": [
+          44,
+          68
+        ],
+        "maoDaFrente": [
+          53,
+          63
+        ],
+        "assentoDoMolinete": [
+          53,
+          62
+        ],
+        "cuboDoMolinete": [
+          53,
+          67
+        ],
+        "inclinacaoPx": -1,
+        "anguloCaboGraus": -56,
+        "quedaDaPontaPx": 7,
+        "flechaDaVaraPx": 2.9
+      },
+      {
+        "indice": 9,
+        "quadro": 10,
+        "nivel": 3,
+        "posicaoManivela": 2,
+        "manivela": "frente",
+        "pontaDaVara": [
+          79,
+          53
+        ],
+        "cabo": [
+          39,
+          71
+        ],
+        "maoDeTras": [
+          44,
+          68
+        ],
+        "maoDaFrente": [
+          57,
+          67
+        ],
+        "assentoDoMolinete": [
+          53,
+          62
+        ],
+        "cuboDoMolinete": [
+          53,
+          67
+        ],
+        "inclinacaoPx": -1,
+        "anguloCaboGraus": -56,
+        "quedaDaPontaPx": 7,
+        "flechaDaVaraPx": 2.9
+      },
+      {
+        "indice": 10,
+        "quadro": 11,
+        "nivel": 3,
+        "posicaoManivela": 3,
+        "manivela": "baixo",
+        "pontaDaVara": [
+          79,
+          53
+        ],
+        "cabo": [
+          39,
+          71
+        ],
+        "maoDeTras": [
+          44,
+          68
+        ],
+        "maoDaFrente": [
+          53,
+          71
+        ],
+        "assentoDoMolinete": [
+          53,
+          62
+        ],
+        "cuboDoMolinete": [
+          53,
+          67
+        ],
+        "inclinacaoPx": -1,
+        "anguloCaboGraus": -56,
+        "quedaDaPontaPx": 7,
+        "flechaDaVaraPx": 2.9
+      },
+      {
+        "indice": 11,
+        "quadro": 12,
+        "nivel": 3,
+        "posicaoManivela": 4,
+        "manivela": "trás",
+        "pontaDaVara": [
+          79,
+          53
+        ],
+        "cabo": [
+          39,
+          71
+        ],
+        "maoDeTras": [
+          44,
+          68
+        ],
+        "maoDaFrente": [
+          49,
+          67
+        ],
+        "assentoDoMolinete": [
+          53,
+          62
+        ],
+        "cuboDoMolinete": [
+          53,
+          67
+        ],
+        "inclinacaoPx": -1,
+        "anguloCaboGraus": -56,
+        "quedaDaPontaPx": 7,
+        "flechaDaVaraPx": 2.9
+      },
+      {
+        "indice": 12,
+        "quadro": 13,
+        "nivel": 4,
+        "posicaoManivela": 1,
+        "manivela": "cima",
+        "pontaDaVara": [
+          77,
+          56
+        ],
+        "cabo": [
+          38,
+          72
+        ],
+        "maoDeTras": [
+          43,
+          68
+        ],
+        "maoDaFrente": [
+          52,
+          62
+        ],
+        "assentoDoMolinete": [
+          52,
+          61
+        ],
+        "cuboDoMolinete": [
+          52,
+          66
+        ],
+        "inclinacaoPx": -2,
+        "anguloCaboGraus": -52,
+        "quedaDaPontaPx": 12,
+        "flechaDaVaraPx": 4.8
+      },
+      {
+        "indice": 13,
+        "quadro": 14,
+        "nivel": 4,
+        "posicaoManivela": 2,
+        "manivela": "frente",
+        "pontaDaVara": [
+          77,
+          56
+        ],
+        "cabo": [
+          38,
+          72
+        ],
+        "maoDeTras": [
+          43,
+          68
+        ],
+        "maoDaFrente": [
+          56,
+          66
+        ],
+        "assentoDoMolinete": [
+          52,
+          61
+        ],
+        "cuboDoMolinete": [
+          52,
+          66
+        ],
+        "inclinacaoPx": -2,
+        "anguloCaboGraus": -52,
+        "quedaDaPontaPx": 12,
+        "flechaDaVaraPx": 4.8
+      },
+      {
+        "indice": 14,
+        "quadro": 15,
+        "nivel": 4,
+        "posicaoManivela": 3,
+        "manivela": "baixo",
+        "pontaDaVara": [
+          77,
+          56
+        ],
+        "cabo": [
+          38,
+          72
+        ],
+        "maoDeTras": [
+          43,
+          68
+        ],
+        "maoDaFrente": [
+          52,
+          70
+        ],
+        "assentoDoMolinete": [
+          52,
+          61
+        ],
+        "cuboDoMolinete": [
+          52,
+          66
+        ],
+        "inclinacaoPx": -2,
+        "anguloCaboGraus": -52,
+        "quedaDaPontaPx": 12,
+        "flechaDaVaraPx": 4.8
+      },
+      {
+        "indice": 15,
+        "quadro": 16,
+        "nivel": 4,
+        "posicaoManivela": 4,
+        "manivela": "trás",
+        "pontaDaVara": [
+          77,
+          56
+        ],
+        "cabo": [
+          38,
+          72
+        ],
+        "maoDeTras": [
+          43,
+          68
+        ],
+        "maoDaFrente": [
+          48,
+          66
+        ],
+        "assentoDoMolinete": [
+          52,
+          61
+        ],
+        "cuboDoMolinete": [
+          52,
+          66
+        ],
+        "inclinacaoPx": -2,
+        "anguloCaboGraus": -52,
+        "quedaDaPontaPx": 12,
+        "flechaDaVaraPx": 4.8
+      }
+    ],
+    "ale": [
+      {
+        "indice": 0,
+        "quadro": 1,
+        "nivel": 1,
+        "posicaoManivela": 1,
+        "manivela": "cima",
+        "pontaDaVara": [
+          78,
+          50
+        ],
+        "cabo": [
+          40,
+          72
+        ],
+        "maoDeTras": [
+          45,
+          69
+        ],
+        "maoDaFrente": [
+          54,
+          65
+        ],
+        "assentoDoMolinete": [
+          54,
+          64
+        ],
+        "cuboDoMolinete": [
+          54,
+          69
+        ],
+        "inclinacaoPx": 0,
+        "anguloCaboGraus": -61,
+        "quedaDaPontaPx": 0,
+        "flechaDaVaraPx": 0
+      },
+      {
+        "indice": 1,
+        "quadro": 2,
+        "nivel": 1,
+        "posicaoManivela": 2,
+        "manivela": "frente",
+        "pontaDaVara": [
+          78,
+          50
+        ],
+        "cabo": [
+          40,
+          72
+        ],
+        "maoDeTras": [
+          45,
+          69
+        ],
+        "maoDaFrente": [
+          58,
+          69
+        ],
+        "assentoDoMolinete": [
+          54,
+          64
+        ],
+        "cuboDoMolinete": [
+          54,
+          69
+        ],
+        "inclinacaoPx": 0,
+        "anguloCaboGraus": -61,
+        "quedaDaPontaPx": 0,
+        "flechaDaVaraPx": 0
+      },
+      {
+        "indice": 2,
+        "quadro": 3,
+        "nivel": 1,
+        "posicaoManivela": 3,
+        "manivela": "baixo",
+        "pontaDaVara": [
+          78,
+          50
+        ],
+        "cabo": [
+          40,
+          72
+        ],
+        "maoDeTras": [
+          45,
+          69
+        ],
+        "maoDaFrente": [
+          54,
+          73
+        ],
+        "assentoDoMolinete": [
+          54,
+          64
+        ],
+        "cuboDoMolinete": [
+          54,
+          69
+        ],
+        "inclinacaoPx": 0,
+        "anguloCaboGraus": -61,
+        "quedaDaPontaPx": 0,
+        "flechaDaVaraPx": 0
+      },
+      {
+        "indice": 3,
+        "quadro": 4,
+        "nivel": 1,
+        "posicaoManivela": 4,
+        "manivela": "trás",
+        "pontaDaVara": [
+          78,
+          50
+        ],
+        "cabo": [
+          40,
+          72
+        ],
+        "maoDeTras": [
+          45,
+          69
+        ],
+        "maoDaFrente": [
+          50,
+          69
+        ],
+        "assentoDoMolinete": [
+          54,
+          64
+        ],
+        "cuboDoMolinete": [
+          54,
+          69
+        ],
+        "inclinacaoPx": 0,
+        "anguloCaboGraus": -61,
+        "quedaDaPontaPx": 0,
+        "flechaDaVaraPx": 0
+      },
+      {
+        "indice": 4,
+        "quadro": 5,
+        "nivel": 2,
+        "posicaoManivela": 1,
+        "manivela": "cima",
+        "pontaDaVara": [
+          80,
+          52
+        ],
+        "cabo": [
+          40,
+          71
+        ],
+        "maoDeTras": [
+          45,
+          68
+        ],
+        "maoDaFrente": [
+          54,
+          64
+        ],
+        "assentoDoMolinete": [
+          54,
+          63
+        ],
+        "cuboDoMolinete": [
+          54,
+          68
+        ],
+        "inclinacaoPx": 0,
+        "anguloCaboGraus": -61,
+        "quedaDaPontaPx": 3,
+        "flechaDaVaraPx": 1.3
+      },
+      {
+        "indice": 5,
+        "quadro": 6,
+        "nivel": 2,
+        "posicaoManivela": 2,
+        "manivela": "frente",
+        "pontaDaVara": [
+          80,
+          52
+        ],
+        "cabo": [
+          40,
+          71
+        ],
+        "maoDeTras": [
+          45,
+          68
+        ],
+        "maoDaFrente": [
+          58,
+          68
+        ],
+        "assentoDoMolinete": [
+          54,
+          63
+        ],
+        "cuboDoMolinete": [
+          54,
+          68
+        ],
+        "inclinacaoPx": 0,
+        "anguloCaboGraus": -61,
+        "quedaDaPontaPx": 3,
+        "flechaDaVaraPx": 1.3
+      },
+      {
+        "indice": 6,
+        "quadro": 7,
+        "nivel": 2,
+        "posicaoManivela": 3,
+        "manivela": "baixo",
+        "pontaDaVara": [
+          80,
+          52
+        ],
+        "cabo": [
+          40,
+          71
+        ],
+        "maoDeTras": [
+          45,
+          68
+        ],
+        "maoDaFrente": [
+          54,
+          72
+        ],
+        "assentoDoMolinete": [
+          54,
+          63
+        ],
+        "cuboDoMolinete": [
+          54,
+          68
+        ],
+        "inclinacaoPx": 0,
+        "anguloCaboGraus": -61,
+        "quedaDaPontaPx": 3,
+        "flechaDaVaraPx": 1.3
+      },
+      {
+        "indice": 7,
+        "quadro": 8,
+        "nivel": 2,
+        "posicaoManivela": 4,
+        "manivela": "trás",
+        "pontaDaVara": [
+          80,
+          52
+        ],
+        "cabo": [
+          40,
+          71
+        ],
+        "maoDeTras": [
+          45,
+          68
+        ],
+        "maoDaFrente": [
+          50,
+          68
+        ],
+        "assentoDoMolinete": [
+          54,
+          63
+        ],
+        "cuboDoMolinete": [
+          54,
+          68
+        ],
+        "inclinacaoPx": 0,
+        "anguloCaboGraus": -61,
+        "quedaDaPontaPx": 3,
+        "flechaDaVaraPx": 1.3
+      },
+      {
+        "indice": 8,
+        "quadro": 9,
+        "nivel": 3,
+        "posicaoManivela": 1,
+        "manivela": "cima",
+        "pontaDaVara": [
+          79,
+          53
+        ],
+        "cabo": [
+          39,
+          71
+        ],
+        "maoDeTras": [
+          44,
+          68
+        ],
+        "maoDaFrente": [
+          53,
+          63
+        ],
+        "assentoDoMolinete": [
+          53,
+          62
+        ],
+        "cuboDoMolinete": [
+          53,
+          67
+        ],
+        "inclinacaoPx": -1,
+        "anguloCaboGraus": -56,
+        "quedaDaPontaPx": 7,
+        "flechaDaVaraPx": 2.9
+      },
+      {
+        "indice": 9,
+        "quadro": 10,
+        "nivel": 3,
+        "posicaoManivela": 2,
+        "manivela": "frente",
+        "pontaDaVara": [
+          79,
+          53
+        ],
+        "cabo": [
+          39,
+          71
+        ],
+        "maoDeTras": [
+          44,
+          68
+        ],
+        "maoDaFrente": [
+          57,
+          67
+        ],
+        "assentoDoMolinete": [
+          53,
+          62
+        ],
+        "cuboDoMolinete": [
+          53,
+          67
+        ],
+        "inclinacaoPx": -1,
+        "anguloCaboGraus": -56,
+        "quedaDaPontaPx": 7,
+        "flechaDaVaraPx": 2.9
+      },
+      {
+        "indice": 10,
+        "quadro": 11,
+        "nivel": 3,
+        "posicaoManivela": 3,
+        "manivela": "baixo",
+        "pontaDaVara": [
+          79,
+          53
+        ],
+        "cabo": [
+          39,
+          71
+        ],
+        "maoDeTras": [
+          44,
+          68
+        ],
+        "maoDaFrente": [
+          53,
+          71
+        ],
+        "assentoDoMolinete": [
+          53,
+          62
+        ],
+        "cuboDoMolinete": [
+          53,
+          67
+        ],
+        "inclinacaoPx": -1,
+        "anguloCaboGraus": -56,
+        "quedaDaPontaPx": 7,
+        "flechaDaVaraPx": 2.9
+      },
+      {
+        "indice": 11,
+        "quadro": 12,
+        "nivel": 3,
+        "posicaoManivela": 4,
+        "manivela": "trás",
+        "pontaDaVara": [
+          79,
+          53
+        ],
+        "cabo": [
+          39,
+          71
+        ],
+        "maoDeTras": [
+          44,
+          68
+        ],
+        "maoDaFrente": [
+          49,
+          67
+        ],
+        "assentoDoMolinete": [
+          53,
+          62
+        ],
+        "cuboDoMolinete": [
+          53,
+          67
+        ],
+        "inclinacaoPx": -1,
+        "anguloCaboGraus": -56,
+        "quedaDaPontaPx": 7,
+        "flechaDaVaraPx": 2.9
+      },
+      {
+        "indice": 12,
+        "quadro": 13,
+        "nivel": 4,
+        "posicaoManivela": 1,
+        "manivela": "cima",
+        "pontaDaVara": [
+          77,
+          56
+        ],
+        "cabo": [
+          38,
+          72
+        ],
+        "maoDeTras": [
+          43,
+          68
+        ],
+        "maoDaFrente": [
+          52,
+          62
+        ],
+        "assentoDoMolinete": [
+          52,
+          61
+        ],
+        "cuboDoMolinete": [
+          52,
+          66
+        ],
+        "inclinacaoPx": -2,
+        "anguloCaboGraus": -52,
+        "quedaDaPontaPx": 12,
+        "flechaDaVaraPx": 4.8
+      },
+      {
+        "indice": 13,
+        "quadro": 14,
+        "nivel": 4,
+        "posicaoManivela": 2,
+        "manivela": "frente",
+        "pontaDaVara": [
+          77,
+          56
+        ],
+        "cabo": [
+          38,
+          72
+        ],
+        "maoDeTras": [
+          43,
+          68
+        ],
+        "maoDaFrente": [
+          56,
+          66
+        ],
+        "assentoDoMolinete": [
+          52,
+          61
+        ],
+        "cuboDoMolinete": [
+          52,
+          66
+        ],
+        "inclinacaoPx": -2,
+        "anguloCaboGraus": -52,
+        "quedaDaPontaPx": 12,
+        "flechaDaVaraPx": 4.8
+      },
+      {
+        "indice": 14,
+        "quadro": 15,
+        "nivel": 4,
+        "posicaoManivela": 3,
+        "manivela": "baixo",
+        "pontaDaVara": [
+          77,
+          56
+        ],
+        "cabo": [
+          38,
+          72
+        ],
+        "maoDeTras": [
+          43,
+          68
+        ],
+        "maoDaFrente": [
+          52,
+          70
+        ],
+        "assentoDoMolinete": [
+          52,
+          61
+        ],
+        "cuboDoMolinete": [
+          52,
+          66
+        ],
+        "inclinacaoPx": -2,
+        "anguloCaboGraus": -52,
+        "quedaDaPontaPx": 12,
+        "flechaDaVaraPx": 4.8
+      },
+      {
+        "indice": 15,
+        "quadro": 16,
+        "nivel": 4,
+        "posicaoManivela": 4,
+        "manivela": "trás",
+        "pontaDaVara": [
+          77,
+          56
+        ],
+        "cabo": [
+          38,
+          72
+        ],
+        "maoDeTras": [
+          43,
+          68
+        ],
+        "maoDaFrente": [
+          48,
+          66
+        ],
+        "assentoDoMolinete": [
+          52,
+          61
+        ],
+        "cuboDoMolinete": [
+          52,
+          66
+        ],
+        "inclinacaoPx": -2,
+        "anguloCaboGraus": -52,
+        "quedaDaPontaPx": 12,
+        "flechaDaVaraPx": 4.8
+      }
+    ]
+  }
+}

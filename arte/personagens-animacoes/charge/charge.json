@@ -1,0 +1,339 @@
+{
+  "animacao": "charge",
+  "quadro": {
+    "largura": 96,
+    "altura": 96
+  },
+  "spritesheet": {
+    "arquivo": "<personagem>_charge_spritesheet.png",
+    "colunas": 5,
+    "linhas": 1,
+    "ordem": [
+      "1 preparacao",
+      "2 recuo",
+      "3 forca-baixa",
+      "4 forca-media",
+      "5 forca-alta"
+    ]
+  },
+  "ancora": {
+    "phaserOrigin": [
+      0.5,
+      1
+    ],
+    "deslocamentoV4": [
+      30,
+      32
+    ],
+    "solaY": 94,
+    "pes": {
+      "x0": 39,
+      "x1": 56,
+      "y0": 91,
+      "y1": 95
+    },
+    "centroPesX": 47.5
+  },
+  "reproducao": {
+    "preparacao": {
+      "indices": [
+        0,
+        1
+      ],
+      "msPorQuadro": [
+        100,
+        100
+      ],
+      "tipo": "pontual, ao começar a segurar"
+    },
+    "carga": {
+      "tipo": "quadro escolhido pela força atual do medidor (0–100), sem tempo próprio",
+      "faixas": [
+        {
+          "indice": 2,
+          "forcaDe": 0,
+          "forcaAte": 33
+        },
+        {
+          "indice": 3,
+          "forcaDe": 34,
+          "forcaAte": 66
+        },
+        {
+          "indice": 4,
+          "forcaDe": 67,
+          "forcaAte": 100
+        }
+      ]
+    },
+    "cancelamento": {
+      "indices": [
+        1,
+        0
+      ],
+      "msPorQuadro": [
+        60,
+        60
+      ],
+      "depois": "idle",
+      "quando": "soltou antes de 0,2 s (toque curto) ou interrupção"
+    },
+    "soltura": "ao soltar com carga válida, o jogo troca para CAST (não faz parte desta animação)"
+  },
+  "pontos": {
+    "alemao": [
+      {
+        "indice": 0,
+        "pontaDaVara": [
+          64,
+          30
+        ],
+        "cabo": [
+          49,
+          70
+        ],
+        "maoDeTras": [
+          51,
+          64
+        ],
+        "maoDaFrente": [
+          54,
+          56
+        ],
+        "molinete": [
+          58,
+          58
+        ],
+        "inclinacaoPx": 0,
+        "anguloVaraGraus": -21
+      },
+      {
+        "indice": 1,
+        "pontaDaVara": [
+          47,
+          26
+        ],
+        "cabo": [
+          52,
+          68
+        ],
+        "maoDeTras": [
+          51,
+          62
+        ],
+        "maoDaFrente": [
+          50,
+          54
+        ],
+        "molinete": [
+          54,
+          56
+        ],
+        "inclinacaoPx": 1,
+        "anguloVaraGraus": 7
+      },
+      {
+        "indice": 2,
+        "pontaDaVara": [
+          34,
+          30
+        ],
+        "cabo": [
+          55,
+          66
+        ],
+        "maoDeTras": [
+          52,
+          61
+        ],
+        "maoDaFrente": [
+          48,
+          54
+        ],
+        "molinete": [
+          52,
+          56
+        ],
+        "inclinacaoPx": 1,
+        "anguloVaraGraus": 30
+      },
+      {
+        "indice": 3,
+        "pontaDaVara": [
+          27,
+          34
+        ],
+        "cabo": [
+          57,
+          64
+        ],
+        "maoDeTras": [
+          53,
+          60
+        ],
+        "maoDaFrente": [
+          47,
+          54
+        ],
+        "molinete": [
+          51,
+          56
+        ],
+        "inclinacaoPx": 1,
+        "anguloVaraGraus": 45
+      },
+      {
+        "indice": 4,
+        "pontaDaVara": [
+          20,
+          40
+        ],
+        "cabo": [
+          57,
+          63
+        ],
+        "maoDeTras": [
+          52,
+          60
+        ],
+        "maoDaFrente": [
+          44,
+          55
+        ],
+        "molinete": [
+          48,
+          57
+        ],
+        "inclinacaoPx": 2,
+        "anguloVaraGraus": 58
+      }
+    ],
+    "ale": [
+      {
+        "indice": 0,
+        "pontaDaVara": [
+          64,
+          30
+        ],
+        "cabo": [
+          49,
+          70
+        ],
+        "maoDeTras": [
+          51,
+          64
+        ],
+        "maoDaFrente": [
+          54,
+          56
+        ],
+        "molinete": [
+          58,
+          58
+        ],
+        "inclinacaoPx": 0,
+        "anguloVaraGraus": -21
+      },
+      {
+        "indice": 1,
+        "pontaDaVara": [
+          47,
+          26
+        ],
+        "cabo": [
+          52,
+          68
+        ],
+        "maoDeTras": [
+          51,
+          62
+        ],
+        "maoDaFrente": [
+          50,
+          54
+        ],
+        "molinete": [
+          54,
+          56
+        ],
+        "inclinacaoPx": 1,
+        "anguloVaraGraus": 7
+      },
+      {
+        "indice": 2,
+        "pontaDaVara": [
+          34,
+          30
+        ],
+        "cabo": [
+          55,
+          66
+        ],
+        "maoDeTras": [
+          52,
+          61
+        ],
+        "maoDaFrente": [
+          48,
+          54
+        ],
+        "molinete": [
+          52,
+          56
+        ],
+        "inclinacaoPx": 1,
+        "anguloVaraGraus": 30
+      },
+      {
+        "indice": 3,
+        "pontaDaVara": [
+          27,
+          34
+        ],
+        "cabo": [
+          57,
+          64
+        ],
+        "maoDeTras": [
+          53,
+          60
+        ],
+        "maoDaFrente": [
+          47,
+          54
+        ],
+        "molinete": [
+          51,
+          56
+        ],
+        "inclinacaoPx": 1,
+        "anguloVaraGraus": 45
+      },
+      {
+        "indice": 4,
+        "pontaDaVara": [
+          20,
+          40
+        ],
+        "cabo": [
+          57,
+          63
+        ],
+        "maoDeTras": [
+          52,
+          60
+        ],
+        "maoDaFrente": [
+          44,
+          55
+        ],
+        "molinete": [
+          48,
+          57
+        ],
+        "inclinacaoPx": 2,
+        "anguloVaraGraus": 58
+      }
+    ]
+  }
+}

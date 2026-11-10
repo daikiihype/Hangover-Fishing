@@ -10,7 +10,7 @@
 **Estética:** Pixel art retrô, inspirada em jogos arcade dos anos 90/2000
 **Tecnologia sugerida:** Phaser 3 + JavaScript + HTML5/CSS
 **Data da versão:** 07/11/2026
-**Status do documento:** Em consolidação — nenhuma implementação iniciada. Próximo passo: Protótipo 0 (teste de multitouch), planejado em `docs/PLANO_PROTOTIPO_MULTITOUCH.md`.
+**Status do documento:** Em consolidação. Protótipo 0 (multitouch) implementado e, segundo o criador, testado na prática. **Protótipo P1 (primeiro ciclo de pesca) implementado** em `prototipos/p1-pesca/` em 08/11/2026: testes automatizados aprovados, **testes em celulares reais pendentes** (seção 16.5). **Revisão de direção criativa das decisões D1–D10 do P1 em 08/11/2026** (seção 16.6). **P1 Patch 01 (08/11/2026)** implementou D2, D3, D4, D7, D8 e D9, e o ajuste "ARREMESSO CANCELADO" foi acrescentado (seção 16.8), tudo validado só automaticamente. **Próxima etapa: validação física B1–B14** (`prototipos/p1-pesca/PROTOCOLO_VALIDACAO_FISICA.md`), começando por B5 e B11.
 
 ---
 
@@ -29,6 +29,7 @@ Cada decisão relevante está marcada com um dos status abaixo:
 | **[FUTURO]** | Fora do primeiro protótipo; mantido documentado para versões posteriores. |
 | **[PENDENTE]** | Dúvida aberta que precisa de decisão do criador. Ver seção 19. |
 | **[AUTONOMIA]** | Decisão de gameplay tomada pelo diretor criativo de gameplay (ChatGPT) dentro da autonomia criativa (seção 0.3). Vale até ser ajustada ou vetada pelo criador; não exige aprovação individual. |
+| **[APROVADO — DIREÇÃO CRIATIVA]** | Decisão aprovada em revisão formal da direção criativa de gameplay (seção 0.3). Usado pela primeira vez na revisão das decisões D1–D10 do P1 (seção 16.6). Aprovar uma decisão **não** significa que ela já esteja implementada: a seção 16.6 separa decisão, implementação e validação. |
 
 ## 0.2. Histórico de versões
 
@@ -40,6 +41,12 @@ Cada decisão relevante está marcada com um dos status abaixo:
 | v0.5 | Nome oficial **ALE** (substitui "Pai"); Alemão identificado como **Lucas**, marido de Maria e pai de Sirius; relações e formas de tratamento completas; personalidades aprovadas de ALE e Maria; relação ALE–Lucas sem dinâmica obrigatória de provocação; Maria e Sirius como personagens obrigatórios; Maria não pesca; sons de Sirius exclusivamente 8-bit, sem apelidos; referência à auditoria de assets (`docs/ASSET_AUDIT.md`); observação de PI sobre referência a Harry Potter em retratos de Sirius; análise do escopo do protótipo; pendências e inconsistências atualizadas. |
 | v0.6 | Registro da diretriz de **autonomia criativa** para a direção de gameplay (seção 0.3); novas mecânicas aprovadas: **toque prematuro ignorado** e **recolher a linha sem peixe** (seções 5.3 e 6.6); revisão de gameplay com sugestões separadas (seção 20); planejamento do **Protótipo 0 — teste de multitouch** (seção 16.4 e `docs/PLANO_PROTOTIPO_MULTITOUCH.md`); referência aos novos assets (logo e três folhas de peixes e objetos, ver `docs/ASSET_AUDIT.md`); novas observações de PI e de distribuição; pendências reclassificadas por momento de decisão. |
 | v0.6 (complemento) | Divisão de responsabilidades: ChatGPT como diretor criativo de gameplay, Claude na análise técnica, arquitetura, auditoria e implementação; plano do Protótipo 0 **aprovado** (implementação aguarda missão); mecânica "soltar e tocar de novo dentro da janela de mordida" registrada para teste futuro; pendências A1 e A2 resolvidas. |
+| v0.6 (implementação P0) | Protótipo 0 implementado em `prototipos/p0-multitouch/`; testes automatizados executados; testes em celulares reais pendentes. Nenhuma decisão de design alterada. |
+| v0.6 (implementação P1) | 08/11/2026 — Criador informa que o P0 foi testado e funciona na prática. **Protótipo P1** (primeiro ciclo de pesca, greybox) implementado em `prototipos/p1-pesca/` (seção 16.5). A missão P1 exigiu a regra "novo toque depois do sinal de mordida", que corresponde à opção (d) da S1 (seção 20). Decisões de implementação registradas como **[PROPOSTA]** (seção 16.5). Valores iniciais de tensão e tempos em `prototipos/p1-pesca/BALANCEAMENTO.md`. Nenhuma decisão **[APROVADO]** alterada. |
+| v0.6 (revisão criativa P1) | 08/11/2026 — A direção criativa revisou as propostas D1–D10 da seção 16.5 e aprovou as dez, com ajustes, como **[APROVADO — DIREÇÃO CRIATIVA]** (nova seção 16.6; novo status na legenda 0.1). As propostas originais foram mantidas como histórico na 16.5. Registradas as divergências entre o texto original e o código (D3, D7, D8). **Nenhum código foi alterado:** os ajustes aprovados estão pendentes de implementação (`docs/PLANO_PROTOTIPO_MULTITOUCH.md`, seção 11). Trechos relacionados atualizados: 5.3, 6.2, 6.3, 6.6, 7.3, 14.2, 14.4, 19 e 20. |
+| v0.6 (P1 Patch 01) | 08/11/2026 — Implementados no P1: **D8** (pausa por interrupção: perda de foco, página oculta, `pagehide`, `freeze`; retomada por toque; prioridade máxima), **D4** (espera preservada), **D3** (beliscadas sem som), **D7** (cartões unificados), **D2** (aviso "SEGURE PARA ARREMESSAR!") e **D9** (vibração desligada por padrão). Validação **automatizada** (48/48 lógica, 36/36 navegador); **nenhuma validação em aparelho físico**. D1, D5, D6 e D10 inalterados. Nova seção 16.7; divergências de 16.5/16.6 marcadas como resolvidas. |
+| v0.6 (P1 ajuste de UX + protocolo físico) | 08/11/2026 — Ajuste de UX **aprovado pela direção criativa** e implementado: quando uma **interrupção do sistema** acontece durante a carga de um arremesso, o arremesso é cancelado sem penalidade e, ao retomar, aparece **"ARREMESSO CANCELADO"** só na metade do jogador afetado. Confirmada a regra de exigir um novo toque para retomar. Criado o protocolo de validação física B1–B14 (`prototipos/p1-pesca/PROTOCOLO_VALIDACAO_FISICA.md`). Validação automatizada: 52/52 lógica, 39/39 navegador. **Nenhum teste físico executado.** Nova seção 16.8. |
+| v0.6 (revisão do aviso) | 08/11/2026 — A direção criativa aprovou a entrega com uma alteração: o aviso **"ARREMESSO CANCELADO"** também aparece quando a carga é cancelada por **abertura do menu** ou **rotação para retrato** (só para o jogador afetado, ~1,3 s, sem penalidade, sem arremesso automático; com o menu aberto, espera o retorno efetivo ao jogo). Validação automatizada: 53/53 lógica, 42/42 navegador. **Próxima etapa: exclusivamente a validação física B1–B14, começando por B5 e B11.** |
 
 ## 0.3. Diretriz de autonomia criativa **[APROVADO]**
 
@@ -522,7 +529,8 @@ Durante a espera, o mesmo gesto pode significar "fisgar" (tocar) ou "recolher" (
 - **Tamanho e formato exato da zona de toque:** metade inteira da tela ou área menor na parte inferior? (O Protótipo 0 testa isso.)
 - **Feedback visual da zona:** como o jogador percebe que está pressionando e em qual estado está.
 - **Toques repetidos sem penalidade:** como o toque prematuro é ignorado sem custo, um jogador pode tocar sem parar e sempre acertar a mordida. Ver a análise e as opções na seção 20 (S1).
-- **Mordida durante o recolhimento:** um peixe pode morder enquanto a linha vazia está sendo recolhida? *(Proposta inicial: não, no primeiro protótipo.)*
+- **Mordida durante o recolhimento:** um peixe pode morder enquanto a linha vazia está sendo recolhida? *(Proposta inicial: não, no primeiro protótipo.)* → **No P1: não.** Se o jogador solta no meio do recolhimento, a boia fica onde está. **Decisão D4 [APROVADO — DIREÇÃO CRIATIVA] (08/11/2026):** a espera deve **continuar de onde estava**, sem novo sorteio, e não pode haver penalidade escondida por toque prematuro. ~~O código atual do P1 ainda sorteia uma nova espera (correção pendente, seção 16.6).~~ **Implementado no Patch 01 (08/11/2026):** a espera continua com o tempo que faltava (seção 16.7).
+- **Toques repetidos no P1:** a missão P1 exigiu um **novo toque depois do sinal de mordida** (opção d da S1). Um dedo apoiado antes da mordida não fisga. A eficácia contra toques rápidos repetidos será medida no teste em celular (contador de toques prematuros).
 
 ### Resolvidas na v0.6
 - ~~Toque fora de hora durante a espera~~ → ignorado, sem penalidade (seção 6.3).
@@ -554,6 +562,8 @@ Ao soltar, a linha é arremessada.
 
 A força e o timing determinam a distância.
 
+**Complemento — D1 [APROVADO — DIREÇÃO CRIATIVA] (08/11/2026):** o medidor de força é **cíclico** (enche e esvazia). A distância deve ter significado na experiência: **curto** = pescaria mais acessível e rápida, com tendência a peixes menores; **médio** = equilíbrio entre espera, tamanho e dificuldade; **longo** = possibilidade de peixes maiores e mais interessantes, com briga potencialmente mais difícil. A relação exata entre distância, espécies, peso, espera e resistência **ainda precisa de balanceamento**. **Implementado no P1:** apenas o medidor cíclico. **Pendente:** a recompensa por distância (hoje a distância só muda o ponto de partida da briga). Ver seção 16.6.
+
 ## 6.3. Espera e fisgada
 
 A boia apresenta diferentes sinais:
@@ -571,6 +581,13 @@ O jogador precisa identificar o momento adequado e **tocar** para fisgar. **[APR
 - Não há penalidade.
 - A pescaria continua normalmente.
 - O jogador deve aguardar o sinal de mordida.
+
+### Beliscadas e mordida — D3 **[APROVADO — DIREÇÃO CRIATIVA]** (08/11/2026)
+- Antes da mordida podem ocorrer **beliscadas** (sinais falsos). Tocar nelas é um toque prematuro: ignorado, sem penalidade.
+- No P1, as beliscadas devem ser **exclusivamente visuais**.
+- A mordida verdadeira deve ter um sinal **visual e sonoro claramente distinto** das beliscadas.
+- ~~**Divergência conhecida:** o código atual do P1 toca um bipe curto e baixo em cada beliscada. A remoção está pendente (seção 16.6).~~ **Resolvido no Patch 01:** as beliscadas não têm som; a mordida mantém o bipe duplo, a borda piscando e o "!".
+- Dos quatro sinais listados acima, o P1 representa as pequenas afundadas (beliscadas) e o afundamento rápido (mordida). O movimento lateral não está representado.
 
 ## 6.4. Briga com o peixe
 
@@ -611,6 +628,8 @@ Quando o peixe chega à margem, a captura acontece automaticamente:
 
 Gesto: segurar a zona enquanto a linha está na água sem peixe fisgado (seção 5.3).
 
+**Complemento — D4 [APROVADO — DIREÇÃO CRIATIVA] (08/11/2026):** se o jogador interromper o recolhimento, a espera **continua do ponto em que estava**, sem novo sorteio do tempo. Nenhum toque prematuro pode gerar penalidade escondida. ~~**Pendente de implementação:** hoje o P1 sorteia uma nova espera ao interromper o recolhimento. Como um toque prematuro de 0,2 s ou mais vira recolhimento, isso funciona como uma penalidade escondida (seção 16.6).~~ **Implementado no Patch 01 (08/11/2026):** a espera é retomada com o tempo restante (o tempo recolhendo não conta) e não há novo sorteio. Efeito residual conhecido: um toque prematuro de 0,2 s ou mais ainda aproxima um pouco a boia (é um recolhimento curto). A avaliar no teste físico (B5).
+
 ---
 
 # 7. SISTEMA DE TENSÃO
@@ -645,6 +664,11 @@ A mecânica precisa ser responsiva e compreensível, sem depender de movimentos 
 - Tempo tolerado na zona frouxa antes do peixe escapar.
 - Se o risco acumulado "descansa" ao voltar para a zona segura, e em que velocidade.
 - Como o jogador percebe que está perto de perder (piscar, vibração, som da linha).
+
+**Valores iniciais do P1 [PROTÓTIPO]:** definidos por simulação e registrados em `prototipos/p1-pesca/BALANCEAMENTO.md`. Crítica por 1 s acumulado rompe a linha; frouxa por 2 s acumulados deixa o peixe escapar; o risco acumulado "descansa" na metade da velocidade em que subiu. **Ainda não calibrados com pessoas.**
+
+**D5 [APROVADO — DIREÇÃO CRIATIVA] (08/11/2026):** a mecânica de **risco acumulado** é mantida. O jogador deve conseguir compreender que visitas repetidas às zonas perigosas acumulam risco. Se os testes físicos mostrarem confusão, a visibilidade do indicador será aumentada. Os valores numéricos continuam sujeitos a balanceamento.
+**D6 [APROVADO — DIREÇÃO CRIATIVA] (08/11/2026):** durante a briga, o controle responde **imediatamente**, sem o limiar de 200 ms; soltar alivia a tensão. Já é o comportamento do P1.
 
 ---
 
@@ -857,6 +881,8 @@ Regras do greybox:
 - Interface arcade.
 - Paleta agradável e legível em celulares.
 
+**D10 [APROVADO — DIREÇÃO CRIATIVA] (08/11/2026):** a direção visual oficial **continua sendo câmera lateral 2D**. A visão "de frente" do greybox do P1 é apenas uma **solução experimental de prototipagem**. Não é decisão de arquitetura nem de arte. **Antes de iniciar a arte final**, deverá existir uma etapa específica de **adaptação e validação do layout lateral para dois jogadores** (ainda não planejada nem implementada).
+
 ## 14.3. Equipamentos visuais obrigatórios **[APROVADO]**
 - Vara vermelha e carretilha/molinete vermelho do Alemão.
 - Vara preta e amarela do ALE.
@@ -873,6 +899,12 @@ Regras do greybox:
 - Reações dos personagens.
 - Vocalizações de Sirius **exclusivamente em 8-bit**, sem gravações reais de bebê. **[APROVADO]**
 - Choro de Sirius (8-bit) e Maria acalmando. **[PROPOSTA]**
+
+**Som e vibração no protótipo — D9 [APROVADO — DIREÇÃO CRIATIVA] (08/11/2026):**
+- Manter os efeitos sonoros sintetizados (temporários) e os sons distintos para tensão excessiva e tensão insuficiente.
+- A **vibração deve ficar desligada por padrão**; a opção de ativá-la pode existir nas configurações.
+- Motivo: a vibração é do **aparelho inteiro**, compartilhado pelos dois jogadores, e pode confundi-los (a mordida de um vibra também nas mãos do outro).
+- ~~**Divergência conhecida:** no P1 atual, a vibração começa **ligada**. A mudança está pendente (seção 16.6).~~ **Resolvido no Patch 01:** a vibração começa desligada e pode ser ligada no menu do protótipo. Os sons não foram alterados.
 
 ---
 
@@ -1010,9 +1042,157 @@ Ele usa somente elementos temporários (formas e texto). Não usa retratos, spri
 
 O planejamento completo (estrutura técnica, arquivos, riscos, plano de testes e critérios objetivos de sucesso) está em **`docs/PLANO_PROTOTIPO_MULTITOUCH.md`**.
 
-**Plano aprovado pelo criador [APROVADO]**, incluindo a pasta `prototipos/p0-multitouch/` separada do código principal. A implementação **só começa com uma missão específica**.
+**Plano aprovado pelo criador [APROVADO]**, incluindo a pasta `prototipos/p0-multitouch/` separada do código principal.
+
+**Situação (07/11/2026):** implementado em `prototipos/p0-multitouch/`. Testes automatizados aprovados (18/18 lógica; 30/30 navegador com multitouch simulado). **Testes em celulares reais ainda não executados**: o Protótipo 0 **não** está aprovado até lá (ver `prototipos/p0-multitouch/RESULTADOS.md`).
 
 Ordem atualizada **[PROPOSTA]**: Protótipo 0 (multitouch) → Fase A (núcleo da pescaria) → Fase B (camada de personagens).
+
+**Atualização (08/11/2026):** o criador informou, na missão P1, que o Protótipo 0 foi testado e está funcionando corretamente na prática, e autorizou o primeiro protótipo de gameplay (seção 16.5). Os números dos testes físicos do P0 não foram registrados em `prototipos/p0-multitouch/RESULTADOS.md`.
+
+---
+
+## 16.5. Protótipo P1 — Primeiro ciclo de pesca **[PROTÓTIPO]**
+
+Primeira parte da Fase A (seção 16.1): **dois jogadores pescam ao mesmo tempo, de forma independente, no mesmo celular**, em greybox.
+
+**Local:** `prototipos/p1-pesca/` (o P0 foi preservado sem alterações; os módulos de entrada do P0 foram reaproveitados como cópias idênticas).
+**Documentos:** `README.md` (instruções e arquitetura), `RESULTADOS.md` (relatório de testes), `BALANCEAMENTO.md` (parâmetros).
+
+### O que o P1 cobre (itens da Fase A)
+| Item da Fase A (16.1) | No P1 |
+|---|---|
+| 1–2. Cenário e personagens em greybox | ✔ Rio compartilhado, dois lados identificados, varas com as cores aprovadas (vermelha; preta e amarela) |
+| 3–4. Multitouch e zonas independentes | ✔ Reaproveitados do P0 |
+| 5. Arremesso | ✔ Segurar carrega, soltar arremessa; força e momento da soltura definem a distância |
+| 6. Boia e fisgada | ✔ Espera aleatória, sinais falsos, mordida com sinal visual, sonoro e vibração; novo toque dentro da janela. *(Revisão 08/11: beliscadas só visuais e vibração desligada por padrão foram aprovadas; **implementadas no Patch 01**, ver 16.7)* |
+| 7. Indicador de tensão com dois riscos | ✔ Quatro zonas e risco acumulado visível |
+| 8. Briga com o peixe | ✔ Peixe com energia, puxões e fases de corrida e descanso |
+| 9. Captura automática | ✔ Cartão com tipo de peixe, peso e quem capturou |
+| 10. Três espécies (perfis provisórios) | ✔ Três **perfis de jogabilidade** sem nome de espécie real: rápido, pesado e arisco |
+| 11. Pontuação individual e coletiva | **Parcial:** só a contagem de peixes e o maior peso de cada jogador na sessão, sem persistência |
+
+Fora do P1, conforme a missão: progressão, loja, inventário, iscas, multiplayer online, menus definitivos, animações finais, diálogos, eventos especiais e Fase B (Maria e Sirius).
+
+### Decisões de implementação — propostas originais (histórico)
+> **Revisadas em 08/11/2026.** As dez propostas abaixo foram aprovadas, com ajustes, pela direção criativa. As decisões em vigor estão na **seção 16.6**. Esta tabela fica como registro do texto original e não deve ser usada como especificação.
+
+Texto original (08/11/2026), status na época: **[PROPOSTA]**. Tomadas pelo Claude para viabilizar o protótipo. Ficam como proposta até a direção criativa (ChatGPT) incorporá-las ou o criador aprová-las (seção 0.3). Todas são ajustáveis.
+
+| # | Decisão | Motivo |
+|---|---|---|
+| D1 | O medidor de força **vai e volta** (0 → 100% → 0 a cada 1,6 s) | Interpretação de "força **e timing**" (6.2): segurar demais passa do ponto |
+| D2 | Soltar em menos de 0,2 s **cancela** o arremesso | Um toque acidental não lança a linha |
+| D3 | Até 2 **beliscadas** (sinais falsos só visuais) antes da mordida | Sinais da boia (6.3) e a sugestão S4; tocar nelas é ignorado, como qualquer toque antecipado |
+| D4 | **Não há mordida durante o recolhimento** da linha vazia; soltar no meio recomeça a espera | Proposta inicial da seção 5.3 |
+| D5 | Os riscos de tensão são por **tempo acumulado**, que "descansa" a 50% da velocidade fora da zona de risco | Seção 7.1 (permanência, não instante) e pergunta da seção 7.3 |
+| D6 | Durante a briga, segurar recolhe **imediatamente**, sem esperar o limiar de "segurar" | Resposta mais rápida; não há ambiguidade com toque nessa fase |
+| D7 | No cartão de resultado, um toque após 0,6 s já começa o próximo arremesso; sem toque, volta a "pronto" em ~2 s | Sugestão S9: devolver o controle rápido |
+| D8 | Abrir o menu, girar para retrato ou sair da página **pausa** a pescaria; o tempo parado não conta | Ninguém perde um peixe por uma notificação |
+| D9 | Sons temporários sintetizados, com **estéreo por jogador** (Alemão à esquerda, ALE à direita) e sons diferentes para os dois riscos | Sugestão S5; sons temporários permitidos (16.3) |
+| D10 | Layout greybox com o rio visto "de frente" (longe = mais acima na tela) | Cada jogador tem sua coluna de água (S7); a câmera lateral fica para a arte final |
+
+**Divergências entre o texto original e o código do P1**, identificadas na revisão de 08/11/2026 (o código não foi alterado na revisão). **Todas as três foram resolvidas no Patch 01 (seção 16.7)**; o texto abaixo fica como registro:
+- **D3:** o texto diz "só visuais", mas o código toca um bipe curto e baixo em cada beliscada (`src/audio/Sfx.js`). O comentário de `src/logic/config.js` repete "só visuais".
+- **D7:** o texto omite uma exceção. Depois de uma **mordida perdida** (sem reação na janela), os toques durante o cartão são contados como "toque atrasado" e **não** avançam o cartão; é preciso esperar 1,6 s.
+- **D8:** o texto omite que **qualquer travada maior que 0,25 s** também é descontada dos prazos. Além disso, a **perda de foco** (evento `blur`) **não pausa** a pescaria: ela só encerra os toques ativos. A pausa real acontece com menu aberto, tela em retrato, página oculta (o navegador para de desenhar) ou travada acima de 0,25 s. Se o aparelho perder o foco sem ocultar a página (por exemplo, alguns painéis de notificação), a briga continua sem o dedo do jogador e o peixe pode escapar.
+
+### Situação (08/11/2026)
+- Testes automatizados: **35/35** (lógica) e **22/22** (navegador com multitouch simulado).
+- **Testes em celulares reais: NÃO EXECUTADOS.** O roteiro está em `prototipos/p1-pesca/RESULTADOS.md`, Parte B.
+- Critério para avançar (16.1): testar em celular real, com duas pessoas, e confirmar que o núcleo é divertido e que os controles não interferem um no outro.
+- **Revisão de direção criativa (08/11/2026):** as dez decisões foram aprovadas (seção 16.6). Os ajustes de código decorrentes **não foram implementados**.
+
+---
+
+## 16.6. Decisões criativas do P1 — aprovação, implementação e validação
+
+> **Atualizado pelo Patch 01 (08/11/2026):** as colunas "Código atual" e "Implementação" abaixo descrevem a situação **no momento da revisão**. A situação após o patch está na **seção 16.7**.
+
+**Revisão:** 08/11/2026, pela direção criativa de gameplay (seção 0.3). Status das dez decisões: **[APROVADO — DIREÇÃO CRIATIVA]**.
+**Regra desta seção:** "aprovado" é uma decisão de design; "implementado" descreve o código atual do P1; "validado" exige teste físico em celular com duas pessoas. Nada nesta seção foi validado fisicamente.
+Ajustes pendentes, ordenados por prioridade: `docs/PLANO_PROTOTIPO_MULTITOUCH.md`, seção 11.
+
+| # | Decisão aprovada | Código atual do P1 | Implementação | Validação física |
+|---|---|---|---|---|
+| **D1** | Manter o **medidor cíclico** de força. A distância deve ter significado: **curto** = mais acessível e rápido, peixes tendem a ser menores; **médio** = equilíbrio entre espera, tamanho e dificuldade; **longo** = chance de peixes maiores e mais interessantes, briga potencialmente mais difícil. Relação exata entre distância, espécies, peso, espera e resistência **a balancear**. | Medidor cíclico de 1,6 s ✔. A distância **não** influencia peixe, peso nem espera; só define onde a briga começa (mais longe = briga mais longa). | **Medidor: implementado. Recompensa por distância: pendente** (não implementar até nova missão). | B14 (o medidor faz sentido? vale arremessar longe?) |
+| **D2** | Manter: soltar em menos de 0,2 s cancela o arremesso. Acrescentar **feedback visual breve**, como "SEGURE PARA ARREMESSAR!", claro e sem interromper o ritmo. | Cancelamento ✔. **Nenhum** feedback na tela (só um registro no diagnóstico). | **Cancelamento: implementado. Feedback: pendente.** | B1, B2, B10 |
+| **D3** | Manter as beliscadas. No P1, **exclusivamente visuais**. A mordida verdadeira com sinal visual e sonoro **claramente distinto**. | Beliscadas ✔ (0–2 por espera). **Tocam um bipe** (divergência). Mordida com "!", borda piscando e bipe duplo ✔. | **Remover o bipe das beliscadas: pendente.** | **B5 (prioritário)**, B6 |
+| **D4** | Manter o recolhimento durante a espera. Interrompido o recolhimento, a espera **continua de onde estava**, sem novo sorteio. **Sem penalidade escondida** por toque prematuro. | Recolhimento ✔; sem mordida durante o recolhimento ✔. Ao interromper, **sorteia nova espera** (divergência). | **Preservar o tempo de espera: pendente.** | **B5 (prioritário)**, B9 |
+| **D5** | Manter o **risco acumulado**. O jogador deve compreender que visitas repetidas às zonas perigosas acumulam risco. Aumentar a visibilidade do indicador **se** os testes mostrarem confusão. Valores sujeitos a balanceamento. | Risco acumulado com recuperação a 50% ✔; barrinha de risco ao lado do medidor ✔. | **Implementado.** Melhoria de visibilidade: **condicionada ao teste**. | B7, B8, B13 |
+| **D6** | Manter: na briga, resposta **imediata**, sem o limiar de 200 ms; soltar alivia a tensão. | ✔ Conforme a decisão. | **Implementado. Nenhuma alteração prevista.** | B7, B8, B3 |
+| **D7** | **Unificar** o comportamento dos cartões (captura, fuga, linha rompida e mordida perdida): depois de **0,6 s**, um novo toque pode avançar o cartão. O comportamento não deve variar sem explicação. Considerar futuras reações contextuais dos personagens ao revisar a duração dos cartões na próxima fase. | Avançar após 0,6 s ✔ em captura, fuga por linha frouxa e linha rompida. **Mordida perdida não avança** (divergência). | **Unificação: pendente.** Revisão das durações: na fase de personagens. | B10 |
+| **D8** | Manter a **pausa** ao abrir o menu, girar para retrato ou **perder o foco**. Documentar o tratamento de **travadas acima de 0,25 s**. Ao retomar, **nenhum toque antigo** pode permanecer pressionado. A pausa **não pode causar perda injusta** de peixes. | Menu, retrato e página oculta pausam ✔. Travadas acima de 0,25 s são descontadas dos prazos ✔ (agora documentado). Toques antigos são encerrados ✔. **A perda de foco sozinha não pausa** (divergência; ver 16.5). | **Documentação: feita nesta revisão. Pausa na perda de foco: pendente.** | B11, B12 |
+| **D9** | Manter os sons sintetizados e os sons distintos para tensão excessiva e insuficiente. **Vibração desligada por padrão**, com opção de ativar nas configurações. Considerar que a vibração é compartilhada pelo aparelho. | Sons ✔; estéreo por jogador ✔; opção de ligar/desligar vibração no menu ✔. **Vibração começa ligada** (divergência). | **Desligar por padrão: pendente.** | B6, B14 |
+| **D10** | A direção visual oficial continua sendo **câmera lateral 2D**. A visão "de frente" do greybox é **experimental**, não é decisão de arquitetura nem de arte. Antes da arte final, haverá uma etapa de **adaptação e validação do layout lateral** para dois jogadores. | Greybox "de frente" ✔ (experimental). | **Nenhuma alteração prevista no P1.** Etapa de layout lateral: futura, a planejar. | Fora da validação do P1 |
+
+**Observação de processo:** a seção 17 diz que "toda nova mecânica nasce como [PROPOSTA] e só vira [APROVADO] após decisão do criador". As decisões desta seção foram aprovadas pela direção criativa no exercício da autonomia (seção 0.3), por isso usam um status próprio. Continuam sujeitas a ajuste ou veto do criador.
+
+---
+
+## 16.7. P1 Patch 01 — situação das decisões (08/11/2026)
+
+Missão "P1 PATCH 01 — Correções de gameplay e interrupções", autorizada pela direção criativa. Código alterado só em `prototipos/p1-pesca/`; o P0 não foi tocado.
+
+**Legenda desta tabela:** *aprovado* = decisão de design · *implementado* = existe no código · *validado automaticamente* = testes de lógica (Node) e/ou navegador com toques simulados · *validado em aparelho físico* = duas pessoas num celular real (**nenhum** até agora) · *pendente* = o que falta.
+
+| Decisão | Aprovado | Implementado | Validado automaticamente | Validado em aparelho físico | Pendente |
+|---|---|---|---|---|---|
+| **D8** pausa por interrupção | ✔ | ✔ Patch 01 | ✔ | ✘ | Teste B11 com interrupções reais |
+| **D4** espera preservada no recolhimento parcial | ✔ | ✔ Patch 01 | ✔ | ✘ | B5, B9 |
+| **D3** beliscadas só visuais | ✔ | ✔ Patch 01 | ✔ | ✘ | B5 (compreensão) |
+| **D7** cartões unificados | ✔ | ✔ Patch 01 | ✔ | ✘ | B10; durações a revisar na fase de personagens |
+| **D2** aviso "SEGURE PARA ARREMESSAR!" | ✔ | ✔ Patch 01 | ✔ | ✘ | B10 |
+| **D9** vibração desligada por padrão | ✔ | ✔ Patch 01 | ✔ | ✘ | B6, B14 |
+| **D1** distância com significado | ✔ | Parcial: só o medidor cíclico | Medidor ✔ | ✘ | Recompensa por distância (aguarda definição de balanceamento) |
+| **D5** risco acumulado | ✔ | ✔ (sem mudança) | ✔ | ✘ | Reforço visual só se B7/B8/B13 mostrarem confusão |
+| **D6** resposta imediata na briga | ✔ | ✔ (sem mudança) | ✔ | ✘ | — |
+| **D10** câmera lateral oficial | ✔ | Não se aplica (greybox experimental) | — | — | Etapa futura de layout lateral |
+
+### Comportamento implementado
+- **D8:** perda de foco (`blur`), página oculta (`visibilitychange`), `pagehide`, restauração do cache (`pageshow`) e congelamento (`freeze`) encerram os toques ativos e **congelam a pescaria dos dois jogadores**: estado, tensão, risco acumulado, peixe, janela de mordida, tempo até a mordida e duração dos cartões. Aparece **"PAUSADO — Toque na tela para continuar"**. O toque que retoma é consumido e não vira ação de ninguém. Voltar o foco ou a visibilidade **não** retoma sozinho. Menu e orientação retrato também congelam, mas retomam sozinhos ao fechar o menu ou voltar para a horizontal. Uma travada maior que 0,25 s sem evento continua descontada dos prazos (já existia). Uma carga de arremesso em andamento é cancelada pela interrupção, sem aviso e sem penalidade.
+- **D4:** ao soltar no meio do recolhimento, a espera continua com o tempo que faltava quando o recolhimento começou (o tempo recolhendo não conta). Beliscadas ainda não ocorridas são mantidas. Continua sem mordida durante o recolhimento.
+- **D3:** beliscadas sem som; mordida com bipe duplo, "!" e borda piscando.
+- **D7:** nos quatro cartões, um toque depois de 0,6 s avança e já começa a carregar o arremesso; antes disso, o toque gera **um único** registro (`toque-atrasado` no cartão de mordida perdida, `toque-ignorado` nos demais). Um dedo que já estava na tela nunca avança o cartão nem arremessa.
+- **D2:** um toque curto no estado "pronto" mostra "SEGURE PARA ARREMESSAR!" por cerca de 1 s, só na metade de quem tocou, sem pausa nem penalidade.
+- **D9:** vibração desligada por padrão, ativável no menu; sons inalterados.
+
+### Limites reais dos navegadores (D8)
+O jogo só detecta o que o navegador sinaliza. Painel de notificações, central de controle do iPhone e notificações flutuantes **muitas vezes não geram nenhum evento**. Nesses casos, a pescaria continua. Chamadas, alarmes, troca de aplicativo e bloqueio de tela costumam ocultar a página, mas isso não é garantido em todos os aparelhos. Detalhes: `prototipos/p1-pesca/README.md`, seção 6. A confirmação depende do caso B11 em aparelho real.
+
+**O P1 não é considerado funcional** até a validação com duas pessoas em um celular físico (`prototipos/p1-pesca/RESULTADOS.md`, Parte B).
+
+> **Atualização (08/11/2026):** a frase "Uma carga de arremesso em andamento é cancelada pela interrupção, sem aviso e sem penalidade" foi complementada pelo ajuste de UX da seção 16.8: o aviso "ARREMESSO CANCELADO" passou a aparecer na retomada.
+
+---
+
+## 16.8. P1 — Ajuste de UX "ARREMESSO CANCELADO" e preparação da validação física (08/11/2026)
+
+### Decisão
+**[APROVADO — DIREÇÃO CRIATIVA]**: quando uma **interrupção do sistema** acontece durante o **carregamento de um arremesso**:
+- o arremesso é cancelado;
+- não há penalidade nem consumo de recursos;
+- nenhum outro arremesso começa sozinho;
+- ao retomar, aparece brevemente **"ARREMESSO CANCELADO"** na metade do jogador afetado.
+
+O aviso **não** aparece quando a interrupção acontece em qualquer outro estado. **Permanece aprovada** a regra de exigir um novo toque para retomar após interrupção do sistema.
+
+### Como foi implementado
+- "Interrupção do sistema" = os eventos tratados pela D8 (`blur`, `visibilitychange` oculto, `pagehide`, `pageshow` restaurado do cache, `freeze`).
+- ~~**Menu aberto e tela em retrato não são interrupções do sistema.** Eles também cancelam uma carga em andamento (o dedo é encerrado), mas **sem** o aviso. Decisão de implementação a confirmar pela direção criativa.~~
+- **Revisão da direção criativa (08/11/2026) [APROVADO — DIREÇÃO CRIATIVA]:** o aviso **também aparece** quando a carga é cancelada por **abertura do menu** ou **rotação para retrato**. Mesmas regras: só para o jogador afetado, ~1,3 s, sem penalidade, sem arremesso automático; com o menu aberto, o aviso espera o retorno efetivo ao jogo. **Implementado** e validado automaticamente (lógica P02-3 e P02-3b; navegador "P02 menu" e "P02 retrato"). **Não validado fisicamente.**
+- O aviso aparece no momento em que o jogo volta de fato (depois do toque de retomada e sem outra pausa ativa) e dura cerca de 1,3 s.
+- O diagnóstico passou a mostrar `mordida em` também durante o recolhimento ("congelada enquanto recolhe"), para medir o caso B5. Mudança só de diagnóstico; nenhuma mecânica alterada.
+
+### Situação
+| Item | Aprovado | Implementado | Validado automaticamente | Validado em aparelho físico | Pendente |
+|---|---|---|---|---|---|
+| Aviso "ARREMESSO CANCELADO" após interrupção do sistema durante a carga | ✔ | ✔ | ✔ lógica P02-1, P02-2, P02-3b; navegador (perda de foco simulada) | ✘ | B11 (caso carregando de cada interrupção) |
+| Mesmo aviso quando a carga é cancelada por menu ou retrato (revisão de 08/11/2026) | ✔ | ✔ | ✔ lógica P02-3; navegador "P02 menu" e "P02 retrato" | ✘ | B11 (linhas I10 e I11) |
+| Novo toque obrigatório para retomar após interrupção do sistema | ✔ | ✔ (Patch 01) | ✔ | ✘ | B11 |
+| Protocolo de validação física B1–B14 | — | Documento criado | — | **Não executado** | Execução em pelo menos dois aparelhos, um de cada vez |
+
+D1, D5, D6 e D10 não foram alterados.
 
 ---
 
@@ -1066,10 +1246,10 @@ Nenhuma pendência bloqueia o Protótipo 0. A implementação aguarda a próxima
 3. Tamanho e posição das zonas de toque (v0.5 #15).
 4. Feedback visual da zona pressionada.
 5. Limiar entre tocar e segurar.
-6. Toques repetidos sem penalidade — regra preservada; testar futuramente a opção (d) "soltar e tocar de novo dentro da janela" (seção 20, S1).
-7. Mordida durante o recolhimento da linha vazia.
-8. Valores de tempo e velocidade dos dois riscos de tensão (v0.5 #16).
-9. Feedback de perigo: som, cor, tremor, vibração (v0.5 #17).
+6. Toques repetidos sem penalidade — regra preservada; a opção (d) "soltar e tocar de novo dentro da janela" foi **implementada no P1** e aguarda medição em celular (seção 20, S1).
+7. Mordida durante o recolhimento da linha vazia. *(No P1: não. Aguarda avaliação no teste. Relacionado: D4 aprovou que a espera continue de onde estava após um recolhimento interrompido; implementado no Patch 01, seção 16.7.)*
+8. Valores de tempo e velocidade dos dois riscos de tensão (v0.5 #16). *(Valores iniciais do P1 em `prototipos/p1-pesca/BALANCEAMENTO.md`; a calibrar.)*
+9. Feedback de perigo: som, cor, tremor, vibração (v0.5 #17). *(O P1 tem uma primeira versão de cada; a avaliar com pessoas. D9: vibração desligada por padrão, implementado no Patch 01. D5: visibilidade do risco acumulado a reforçar se o teste mostrar confusão.)*
 10. Eventos aleatórios do primeiro protótipo (v0.5 #19).
 11. Frequência das falas de Maria e Sirius (v0.5 #20).
 12. Efeito do choro de Sirius (opções A + B) e se ele afeta uma briga em andamento (v0.5 #5 e #6).
@@ -1115,6 +1295,7 @@ Sugestões separadas das mecânicas aprovadas. Nenhuma altera decisões **[APROV
 
 - **(d) Soltar e tocar de novo dentro da janela** **[PROTÓTIPO — teste futuro]**: para fisgar, o jogador precisa estar **com o dedo solto** e realizar um **novo toque** que comece **dentro da janela de reação** da mordida. Um dedo que já estava pressionado quando a mordida começou não fisga.
   - Observação técnica: a regra elimina a fisgada de quem mantém o dedo apoiado, mas **toques muito rápidos e repetidos ainda podem cair dentro da janela**. A eficácia contra o toque repetido depende da duração da janela e deverá ser medida no teste.
+  - **Implementada no P1 (08/11/2026)**, porque a missão P1 exigiu que a fisgada dependa de um novo toque depois do sinal e que toques anteriores não fiquem guardados. Janela inicial: 1 s, ajustável no menu do protótipo. O P1 conta os toques prematuros e registra cada tempo de reação, para a medição pedida acima.
 
 ### S2 — Ajuda individual para iniciantes
 Cada jogador escolhe, antes da partida, um nível de ajuda: zona segura de tensão maior e janela de fisgada mais longa. Permite que uma pessoa experiente e uma iniciante joguem juntas de forma equilibrada. O nível aparece discretamente na metade de cada jogador, por transparência.
@@ -1123,9 +1304,11 @@ Cada jogador escolhe, antes da partida, um nível de ajuda: zona segura de tens�
 - Arremesso **curto:** mordidas mais rápidas, peixes menores.
 - Arremesso **longo:** espera um pouco maior, chance de peixes maiores ou mais raros e recolhimento mais demorado.
 Dá propósito à força do arremesso e cria escolha de risco e recompensa sem novos controles. Meta inicial de ritmo: primeira mordida entre ~4 e ~12 segundos (a calibrar).
+> **08/11/2026:** a direção criativa aprovou o princípio na decisão **D1** (seção 16.6), com três faixas (curto, médio, longo). A relação exata ainda será balanceada, e a implementação está pendente. O texto desta sugestão continua como proposta original.
 
 ### S4 — Sinal de mordida inconfundível
 A mordida "real" combina, ao mesmo tempo, boia afundando, respingo, som curto e um brilho na borda da metade do jogador. Os sinais anteriores (ondulação, movimento leve) usam só a boia, para ensinar a diferença.
+> **08/11/2026:** coerente com a decisão **D3** (beliscadas só visuais; mordida com sinal visual e sonoro distinto). Bipe das beliscadas removido no Patch 01 (seção 16.7).
 
 ### S5 — Tensão legível sem olhar a barra
 - Som da linha com tom que sobe conforme a tensão.
@@ -1144,6 +1327,7 @@ Dicas curtas na metade de cada jogador nas primeiras ações ("Segure para arrem
 
 ### S9 — Nada pausa o outro jogador
 Capturas, comemorações, diálogos e eventos **nunca congelam** a metade do outro jogador. Animações de captura curtas (até cerca de 2 segundos) para devolver o controle rapidamente.
+> **08/11/2026:** relacionada às decisões **D7** (cartões unificados, avanço após 0,6 s) e **D8**. A pausa da D8 afeta os dois jogadores, mas é causada pelo sistema (menu, retrato, perda de foco, travada), não por eventos do jogo.
 
 ### S10 — Rodada curta para testes
 Um placar com rodada opcional ("maior peixe em 3 minutos" ou "primeiro a 5 peixes") para os testes da Fase A. É uma ferramenta de teste e um ensaio do futuro modo Torneio.

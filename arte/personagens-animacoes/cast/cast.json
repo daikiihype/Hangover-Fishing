@@ -1,0 +1,418 @@
+{
+  "animacao": "cast",
+  "quadro": {
+    "largura": 96,
+    "altura": 96
+  },
+  "spritesheet": {
+    "arquivo": "<personagem>_cast_spritesheet.png",
+    "colunas": 5,
+    "linhas": 1,
+    "ordem": [
+      "1 impulso",
+      "2 chicotada",
+      "3 soltura",
+      "4 acompanhamento",
+      "5 assentamento"
+    ]
+  },
+  "ancora": {
+    "phaserOrigin": [
+      0.5,
+      1
+    ],
+    "deslocamentoV4": [
+      30,
+      32
+    ],
+    "solaY": 94,
+    "pes": {
+      "x0": 39,
+      "x1": 56,
+      "y0": 91,
+      "y1": 95
+    },
+    "centroPesX": 47.5
+  },
+  "reproducao": {
+    "tipo": "pontual; ao terminar, volta para o IDLE",
+    "entrada": "ao soltar com carga válida, a partir de qualquer quadro de carga do CHARGE (3, 4 ou 5); sempre começa no quadro 1",
+    "desenhos": "os 5 quadros e seus desenhos são idênticos nas três faixas de força; dentro do CAST muda só a duração de cada quadro",
+    "diferencaDeAngulo": "a diferença de ângulo da vara acontece na transição do CHARGE para o CAST (o CHARGE para em ~30°, ~45° ou ~58° para trás conforme a força; o CAST sempre começa no quadro 1, ~14°)",
+    "faixaUsada": "a faixa do medidor de força do CHARGE no momento da soltura",
+    "quadros": [
+      {
+        "indice": 0,
+        "id": 1,
+        "nome": "impulso",
+        "msPorFaixa": {
+          "baixa": 70,
+          "media": 60,
+          "alta": 50
+        }
+      },
+      {
+        "indice": 1,
+        "id": 2,
+        "nome": "chicotada",
+        "msPorFaixa": {
+          "baixa": 60,
+          "media": 50,
+          "alta": 40
+        }
+      },
+      {
+        "indice": 2,
+        "id": 3,
+        "nome": "soltura",
+        "msPorFaixa": {
+          "baixa": 80,
+          "media": 70,
+          "alta": 60
+        }
+      },
+      {
+        "indice": 3,
+        "id": 4,
+        "nome": "acompanhamento",
+        "msPorFaixa": {
+          "baixa": 100,
+          "media": 120,
+          "alta": 150
+        }
+      },
+      {
+        "indice": 4,
+        "id": 5,
+        "nome": "assentamento",
+        "msPorFaixa": {
+          "baixa": 150,
+          "media": 160,
+          "alta": 160
+        }
+      }
+    ],
+    "faixas": {
+      "baixa": {
+        "forca": [
+          0,
+          33
+        ],
+        "msPorQuadro": [
+          70,
+          60,
+          80,
+          100,
+          150
+        ],
+        "totalMs": 460
+      },
+      "media": {
+        "forca": [
+          34,
+          66
+        ],
+        "msPorQuadro": [
+          60,
+          50,
+          70,
+          120,
+          160
+        ],
+        "totalMs": 460
+      },
+      "alta": {
+        "forca": [
+          67,
+          100
+        ],
+        "msPorQuadro": [
+          50,
+          40,
+          60,
+          150,
+          160
+        ],
+        "totalMs": 460
+      }
+    },
+    "totalMs": 460,
+    "saida": "idle"
+  },
+  "soltura": {
+    "quadro": 3,
+    "indice": 2,
+    "msAposSoltarOControle": {
+      "baixa": 130,
+      "media": 110,
+      "alta": 90
+    },
+    "pontaDaVara": {
+      "alemao": [
+        81,
+        38
+      ],
+      "ale": [
+        81,
+        38
+      ]
+    },
+    "recomendacao": "o jogo cria ou libera a boia na ponta da vara do quadro de soltura (quadro 3), 130 ms (força baixa), 110 ms (média) ou 90 ms (alta) depois do comando de arremesso; antes disso a boia não aparece"
+  },
+  "pontos": {
+    "alemao": [
+      {
+        "indice": 0,
+        "pontaDaVara": [
+          42,
+          27
+        ],
+        "cabo": [
+          52,
+          68
+        ],
+        "maoDeTras": [
+          51,
+          62
+        ],
+        "maoDaFrente": [
+          49,
+          54
+        ],
+        "molinete": [
+          53,
+          56
+        ],
+        "inclinacaoPx": -1,
+        "anguloVaraGraus": 14
+      },
+      {
+        "indice": 1,
+        "pontaDaVara": [
+          62,
+          27
+        ],
+        "cabo": [
+          50,
+          67
+        ],
+        "maoDeTras": [
+          52,
+          61
+        ],
+        "maoDaFrente": [
+          54,
+          54
+        ],
+        "molinete": [
+          58,
+          56
+        ],
+        "inclinacaoPx": 0,
+        "anguloVaraGraus": -16
+      },
+      {
+        "indice": 2,
+        "pontaDaVara": [
+          81,
+          38
+        ],
+        "cabo": [
+          48,
+          65
+        ],
+        "maoDeTras": [
+          53,
+          61
+        ],
+        "maoDaFrente": [
+          59,
+          56
+        ],
+        "molinete": [
+          59,
+          60
+        ],
+        "inclinacaoPx": 1,
+        "anguloVaraGraus": -50
+      },
+      {
+        "indice": 3,
+        "pontaDaVara": [
+          89,
+          52
+        ],
+        "cabo": [
+          48,
+          62
+        ],
+        "maoDeTras": [
+          54,
+          61
+        ],
+        "maoDaFrente": [
+          62,
+          59
+        ],
+        "molinete": [
+          62,
+          63
+        ],
+        "inclinacaoPx": 1,
+        "anguloVaraGraus": -76
+      },
+      {
+        "indice": 4,
+        "pontaDaVara": [
+          83,
+          50
+        ],
+        "cabo": [
+          44,
+          66
+        ],
+        "maoDeTras": [
+          50,
+          64
+        ],
+        "maoDaFrente": [
+          57,
+          61
+        ],
+        "molinete": [
+          57,
+          65
+        ],
+        "inclinacaoPx": 0,
+        "anguloVaraGraus": -67
+      }
+    ],
+    "ale": [
+      {
+        "indice": 0,
+        "pontaDaVara": [
+          42,
+          27
+        ],
+        "cabo": [
+          52,
+          68
+        ],
+        "maoDeTras": [
+          51,
+          62
+        ],
+        "maoDaFrente": [
+          49,
+          54
+        ],
+        "molinete": [
+          53,
+          56
+        ],
+        "inclinacaoPx": -1,
+        "anguloVaraGraus": 14
+      },
+      {
+        "indice": 1,
+        "pontaDaVara": [
+          62,
+          27
+        ],
+        "cabo": [
+          50,
+          67
+        ],
+        "maoDeTras": [
+          52,
+          61
+        ],
+        "maoDaFrente": [
+          54,
+          54
+        ],
+        "molinete": [
+          58,
+          56
+        ],
+        "inclinacaoPx": 0,
+        "anguloVaraGraus": -16
+      },
+      {
+        "indice": 2,
+        "pontaDaVara": [
+          81,
+          38
+        ],
+        "cabo": [
+          48,
+          65
+        ],
+        "maoDeTras": [
+          53,
+          61
+        ],
+        "maoDaFrente": [
+          59,
+          56
+        ],
+        "molinete": [
+          59,
+          60
+        ],
+        "inclinacaoPx": 1,
+        "anguloVaraGraus": -50
+      },
+      {
+        "indice": 3,
+        "pontaDaVara": [
+          89,
+          52
+        ],
+        "cabo": [
+          48,
+          62
+        ],
+        "maoDeTras": [
+          54,
+          61
+        ],
+        "maoDaFrente": [
+          62,
+          59
+        ],
+        "molinete": [
+          62,
+          63
+        ],
+        "inclinacaoPx": 1,
+        "anguloVaraGraus": -76
+      },
+      {
+        "indice": 4,
+        "pontaDaVara": [
+          83,
+          50
+        ],
+        "cabo": [
+          44,
+          66
+        ],
+        "maoDeTras": [
+          50,
+          64
+        ],
+        "maoDaFrente": [
+          57,
+          61
+        ],
+        "molinete": [
+          57,
+          65
+        ],
+        "inclinacaoPx": 0,
+        "anguloVaraGraus": -67
+      }
+    ]
+  }
+}
