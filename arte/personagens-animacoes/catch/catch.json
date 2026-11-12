@@ -1,0 +1,428 @@
+{
+  "animacao": "catch",
+  "quadro": {
+    "largura": 96,
+    "altura": 96
+  },
+  "spritesheet": {
+    "arquivo": "<personagem>_catch_spritesheet.png",
+    "colunas": 4,
+    "linhas": 1,
+    "ordem": [
+      "1 troca de mão",
+      "2 peixe no ombro",
+      "3 pulinho",
+      "4 pose final"
+    ]
+  },
+  "ancora": {
+    "phaserOrigin": [
+      0.5,
+      1
+    ],
+    "deslocamentoV4": [
+      30,
+      32
+    ],
+    "solaY": 94,
+    "pes": {
+      "x0": 39,
+      "x1": 56,
+      "y0": 91,
+      "y1": 95
+    },
+    "centroPesX": 47.5
+  },
+  "quando": "estado CAUGHT do P1 (FIGHTING → CAUGHT, peixe recolhido)",
+  "reproducao": {
+    "tipo": "pontual, sem loop: 1 → 2 → 3 → 4; o quadro 4 (pose final) fica parado até o fim do cartão de captura",
+    "entrada": [
+      {
+        "indice": 0,
+        "quadro": 1,
+        "ms": 150
+      },
+      {
+        "indice": 1,
+        "quadro": 2,
+        "ms": 150
+      },
+      {
+        "indice": 2,
+        "quadro": 3,
+        "ms": 200
+      },
+      {
+        "indice": 3,
+        "quadro": 4,
+        "ms": "mantido até o fim do cartão"
+      }
+    ],
+    "poseFinal": {
+      "indice": 3,
+      "quadro": 4,
+      "noCartaoDe2200msFicaMs": 1700
+    },
+    "pulinho": "quadros 3 → 4: tronco e cabeça sobem 1 px no 3 e voltam no 4; acontece uma vez só",
+    "saida": {
+      "quadros": [
+        {
+          "indice": 1,
+          "quadro": 2,
+          "ms": 100
+        },
+        {
+          "indice": 0,
+          "quadro": 1,
+          "ms": 100
+        }
+      ],
+      "depois": "idle",
+      "quando": "transição CAUGHT → IDLE do P1 (fim do cartão de 2200 ms). Só visual (200 ms): não atrasa a lógica",
+      "status": "PROPOSTA — aguardando aprovação criativa (o plano não define a saída)"
+    },
+    "cartaoPulado": "se o jogador pular o cartão (toque após 600 ms), o P1 começa a carga: a animação troca para o CHARGE na hora, sem tocar a saída (plano, seção 4)"
+  },
+  "peixe": {
+    "desenhadoPeloJogo": true,
+    "aPartirDoQuadro": 2,
+    "pontoDePresa": "maoDaFrente de cada quadro (pontos.<personagem>[i].maoDaFrente)",
+    "recomendacao": "desenhar o peixe pendurado a partir da mão, para baixo e para o lado de fora (direita, ou esquerda com flipX); a largura livre entre a cabeça e a mão está em espacoAteACabecaPx"
+  },
+  "personalidade": {
+    "alemao": "espontâneo: ergue o peixe bem alto (mão na altura do boné, ao lado da cabeça) e levanta a vara junto; os dois braços para cima no pulinho",
+    "ale": "tranquilo e experiente: mostra o peixe à frente, na altura do ombro; a vara fica apoiada, inclinada para trás, na mão de trás; o mesmo pulinho de 1 px"
+  },
+  "pontos": {
+    "alemao": [
+      {
+        "indice": 0,
+        "quadro": 1,
+        "peixe": false,
+        "espacoAteACabecaPx": 1,
+        "nome": "troca de mão",
+        "maoDaFrente": [
+          56,
+          58
+        ],
+        "maoDeTras": [
+          40,
+          64
+        ],
+        "pontaDaVara": [
+          30,
+          38
+        ],
+        "cabo": [
+          45,
+          78
+        ],
+        "varaGrausDaVertical": 20,
+        "puloPx": 0
+      },
+      {
+        "indice": 1,
+        "quadro": 2,
+        "peixe": true,
+        "espacoAteACabecaPx": 4,
+        "nome": "peixe no ombro",
+        "maoDaFrente": [
+          59,
+          49
+        ],
+        "maoDeTras": [
+          39,
+          62
+        ],
+        "pontaDaVara": [
+          32,
+          35
+        ],
+        "cabo": [
+          43,
+          76
+        ],
+        "varaGrausDaVertical": 15,
+        "puloPx": 0
+      },
+      {
+        "indice": 2,
+        "quadro": 3,
+        "peixe": true,
+        "espacoAteACabecaPx": 5,
+        "nome": "pulinho",
+        "maoDaFrente": [
+          60,
+          40
+        ],
+        "maoDeTras": [
+          37,
+          58
+        ],
+        "pontaDaVara": [
+          32,
+          30
+        ],
+        "cabo": [
+          40,
+          73
+        ],
+        "varaGrausDaVertical": 10,
+        "puloPx": 1
+      },
+      {
+        "indice": 3,
+        "quadro": 4,
+        "peixe": true,
+        "espacoAteACabecaPx": 5,
+        "nome": "pose final",
+        "maoDaFrente": [
+          60,
+          41
+        ],
+        "maoDeTras": [
+          37,
+          59
+        ],
+        "pontaDaVara": [
+          32,
+          31
+        ],
+        "cabo": [
+          40,
+          74
+        ],
+        "varaGrausDaVertical": 10,
+        "puloPx": 0
+      }
+    ],
+    "ale": [
+      {
+        "indice": 0,
+        "quadro": 1,
+        "peixe": false,
+        "espacoAteACabecaPx": 1,
+        "nome": "troca de mão",
+        "maoDaFrente": [
+          56,
+          59
+        ],
+        "maoDeTras": [
+          40,
+          65
+        ],
+        "pontaDaVara": [
+          28,
+          40
+        ],
+        "cabo": [
+          46,
+          79
+        ],
+        "varaGrausDaVertical": 25,
+        "puloPx": 0
+      },
+      {
+        "indice": 1,
+        "quadro": 2,
+        "peixe": true,
+        "espacoAteACabecaPx": 5,
+        "nome": "peixe no ombro",
+        "maoDaFrente": [
+          60,
+          53
+        ],
+        "maoDeTras": [
+          39,
+          65
+        ],
+        "pontaDaVara": [
+          27,
+          40
+        ],
+        "cabo": [
+          45,
+          79
+        ],
+        "varaGrausDaVertical": 25,
+        "puloPx": 0
+      },
+      {
+        "indice": 2,
+        "quadro": 3,
+        "peixe": true,
+        "espacoAteACabecaPx": 6,
+        "nome": "pulinho",
+        "maoDaFrente": [
+          61,
+          50
+        ],
+        "maoDeTras": [
+          39,
+          64
+        ],
+        "pontaDaVara": [
+          27,
+          39
+        ],
+        "cabo": [
+          45,
+          78
+        ],
+        "varaGrausDaVertical": 25,
+        "puloPx": 1
+      },
+      {
+        "indice": 3,
+        "quadro": 4,
+        "peixe": true,
+        "espacoAteACabecaPx": 6,
+        "nome": "pose final",
+        "maoDaFrente": [
+          61,
+          51
+        ],
+        "maoDeTras": [
+          39,
+          65
+        ],
+        "pontaDaVara": [
+          27,
+          40
+        ],
+        "cabo": [
+          45,
+          79
+        ],
+        "varaGrausDaVertical": 25,
+        "puloPx": 0
+      }
+    ]
+  },
+  "continuidade": {
+    "alemao": {
+      "passosDasMaosPx": [
+        {
+          "de": "quadro 1",
+          "para": "quadro 2",
+          "maosPx": 9.5
+        },
+        {
+          "de": "quadro 2",
+          "para": "quadro 3",
+          "maosPx": 9.1
+        },
+        {
+          "de": "quadro 3",
+          "para": "quadro 4",
+          "maosPx": 1
+        },
+        {
+          "de": "quadro 4",
+          "para": "quadro 2",
+          "maosPx": 8.1
+        },
+        {
+          "de": "quadro 2",
+          "para": "quadro 1",
+          "maosPx": 9.5
+        },
+        {
+          "de": "quadro 1",
+          "para": "IDLE",
+          "maosPx": 6.4
+        }
+      ],
+      "entradaVindaDoReelFightPx": {
+        "porNivelEPosicao": [
+          [
+            7.3,
+            11.2,
+            15.1,
+            12.5
+          ],
+          [
+            6.4,
+            10.2,
+            14.1,
+            11.7
+          ],
+          [
+            5.8,
+            9.1,
+            13.3,
+            11.4
+          ],
+          [
+            5.7,
+            8,
+            12.6,
+            11.3
+          ]
+        ]
+      }
+    },
+    "ale": {
+      "passosDasMaosPx": [
+        {
+          "de": "quadro 1",
+          "para": "quadro 2",
+          "maosPx": 7.2
+        },
+        {
+          "de": "quadro 2",
+          "para": "quadro 3",
+          "maosPx": 3.2
+        },
+        {
+          "de": "quadro 3",
+          "para": "quadro 4",
+          "maosPx": 1
+        },
+        {
+          "de": "quadro 4",
+          "para": "quadro 2",
+          "maosPx": 2.2
+        },
+        {
+          "de": "quadro 2",
+          "para": "quadro 1",
+          "maosPx": 7.2
+        },
+        {
+          "de": "quadro 1",
+          "para": "IDLE",
+          "maosPx": 5.8
+        }
+      ],
+      "entradaVindaDoReelFightPx": {
+        "porNivelEPosicao": [
+          [
+            6.4,
+            10.2,
+            14.1,
+            11.7
+          ],
+          [
+            5.8,
+            9.2,
+            13.2,
+            10.8
+          ],
+          [
+            5,
+            8.1,
+            12.4,
+            10.6
+          ],
+          [
+            5,
+            7,
+            11.7,
+            10.6
+          ]
+        ]
+      }
+    }
+  }
+}

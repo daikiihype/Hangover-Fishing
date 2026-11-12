@@ -1,6 +1,7 @@
 # Animação REEL/FIGHT — Alemão e ALE
 
-**Status:** **REEL/FIGHT PRODUZIDO — AGUARDANDO REVISÃO DO CRIADOR.** Não aprovado. Nada foi integrado ao P1.
+**Status:** **[APROVADO — DIREÇÃO CRIATIVA] (11/11/2026)**, conforme entregue e sem alterações nos sprites. Nada foi integrado ao P1.
+**Decisões da aprovação:** curvatura do nível 4 mantida · molinete do ALE mantido, sem reflexo adicional · vara apoiada por uma mão durante o giro aprovada · regra **"completar a volta"** na saída de `REELING_EMPTY` aprovada (seção própria abaixo).
 **Data:** 09/11/2026 · **Plano:** `docs/PLANO_ANIMACOES_PERSONAGENS.md` (seção 5.4) · **Entra a partir de:** IDLE (fisgada) · **Tensão:** zonas do P1 (`config.js`)
 **Base imutável:** sprites v4, IDLE, CHARGE e CAST (não alterados; conferidos por hash)
 
@@ -53,9 +54,58 @@ Nas prévias, os **4 blocos no canto** mostram o nível do quadro (cinza · verd
 | Índice | `(nível − 1) × 4 + (posição − 1)` (0–15); quadro = índice + 1 |
 | Cada posição da manivela | **90 ms** (uma volta = **360 ms**) |
 | Segurando (recolhendo) | Loop das 4 posições do nível atual |
-| Soltando (aliviando) | A manivela **para** na posição atual; o nível continua acompanhando a tensão (sem quadros extras) |
+| Soltando (aliviando) | **Na briga (`FIGHTING`):** a manivela **para** na posição atual; o nível continua acompanhando a tensão (sem quadros extras). **No recolhimento vazio (`REELING_EMPTY`):** vale a regra "completar a volta" (abaixo) |
 | Troca de nível | **Só quando a zona de tensão do P1 muda**, imediata, **preservando a posição da manivela** (ex.: quadro 7 = nível 2, posição 3 → quadro 11 = nível 3, posição 3). O nível nunca é animado sozinho |
 | Fisgada | **Quadro 9** (nível 3, posição 1) por **100 ms** (próxima seção) |
+
+## Regra "completar a volta" — saída do recolhimento vazio [APROVADO — DIREÇÃO CRIATIVA, 11/11/2026]
+
+**Para que serve:** no recolhimento da linha vazia (`REELING_EMPTY`, nível 1), o personagem volta ao IDLE (o `WAITING` também mostra o IDLE). Se a volta acontecesse em qualquer posição da manivela, a mão da frente saltaria até **10 px**. Com a regra, a volta ao IDLE sai sempre da posição 1 (manivela em cima), e o salto é de **2 px**. Não há quadro novo: a regra só decide a ordem dos quadros que já existem.
+
+| Situação | O que o jogo mostra |
+|---|---|
+| **Início** (IDLE/`WAITING` → `REELING_EMPTY`) | Nível 1 começando **sempre na posição 1** (índice 0), loop de 90 ms por posição |
+| **Conclusão** (`REELING_EMPTY` → `IDLE`, linha recolhida) | A manivela **continua girando** até mostrar a posição 1; no quadro seguinte, IDLE |
+| **Soltura antecipada** (`REELING_EMPTY` → `WAITING`) | Igual: completa a volta até a posição 1 e então mostra o IDLE |
+| Saída já na posição 1 | IDLE imediato |
+| **Voltou a segurar durante a finalização** (a lógica volta a `REELING_EMPTY`) | O loop **continua da posição atual**, sem voltar à 1 e sem salto |
+| Toque curto durante a finalização (a lógica continua em `WAITING`) | Nada muda: a volta termina normalmente |
+| A lógica pede outra animação durante a finalização (fisgada, carga) | **Troca imediata**; a finalização é abandonada (prioridade da lógica, ver abaixo) |
+
+- **Duração:** no máximo **3 posições = 270 ms** até chegar à posição 1 (em média, 135 ms). O tempo é de jogo: congela na pausa.
+- **Só vale para `REELING_EMPTY`.** Em `FIGHTING`, nada muda: soltar continua parando a manivela.
+- **Só visual.** A finalização lê o estado do P1 e nunca o altera. Ela não reinicia nem pausa a espera, não emite eventos, não conta toques e não gera penalidades. Na soltura antecipada, o P1 retoma a espera de onde parou (D4), como hoje, enquanto a manivela termina a volta.
+- **Prioridade da lógica:** a finalização nunca atrasa uma resposta do jogo. O `BITE` mostra o IDLE (plano, seção 4), então uma mordida durante a finalização não a interrompe; a volta termina e o IDLE aparece. Mas se o jogador **fisgar** (`FIGHTING`) ou **iniciar uma carga** (`CHARGING`, possível só depois da conclusão, com um toque novo) durante esses ≤ 270 ms, a animação troca na hora. Nesses casos raros, o salto da mão é o da posição em que a manivela estava: fisgada a partir das posições 3 / 4: 10 / 6,7 px; carga a partir da posição 4: 13,6 px.
+
+**Referência para a integração** (por quadro, com `dt` em ms de jogo; `pos` 0–3 = posições 1–4):
+```
+se estado == REELING_EMPTY:
+    se o visual não estava recolhendo nem finalizando: pos = 0, acumulado = 0   # começa na posição 1
+    modo = recolhendo                                                          # se estava finalizando, continua da posição atual
+    acumulado += dt; a cada 90 ms: pos = (pos + 1) % 4
+senão, se modo ∈ {recolhendo, finalizando} e estado ∈ {IDLE, WAITING, BITE}:
+    se pos == 0: modo = idle                                                   # já em cima: IDLE
+    senão: modo = finalizando; acumulado += dt; a cada 90 ms: pos = pos + 1 (para em 0)
+           # ao chegar em 0, a posição 1 aparece neste quadro e o IDLE vem no próximo
+senão: segue a animação do estado (IDLE, CHARGE, fisgada…) imediatamente
+mostrar: recolhendo/finalizando → reel_fight índice pos (nível 1); idle → IDLE
+```
+Os dados estão em `reel_fight.json` → `completarAVolta`.
+
+**Teste executado (sem integração):** a referência acima foi testada contra a máquina de estados **real** do P1 (`FishingPlayer.js`, só leitura, passos de 16 ms), com 303 roteiros e 117.222 verificações:
+- **Conclusão (42 roteiros):** saídas pelas 4 posições.
+- **Soltura antecipada (41 roteiros):** saídas pelas 4 posições.
+- **Retomada durante a finalização (169 roteiros).**
+- **Toque curto (8 roteiros).**
+- **Fisgada e carga durante a finalização (43 roteiros).**
+
+Resultados:
+- A volta ao IDLE sai sempre da posição 1.
+- A manivela nunca pula nem volta.
+- A posição 1 é alcançada em no máximo 272 ms (270 ms + 1 quadro de 16 ms).
+- Fora das trocas comandadas pela lógica, as mãos movem no máximo 5,7 px por quadro.
+- O visual nunca atrasa a troca de animação.
+- **O log e o estado final da lógica são idênticos com e sem o controlador visual.**
 
 ## Fisgada (para a lógica do jogo; sem animação separada)
 
@@ -103,10 +153,12 @@ Nas prévias, os **4 blocos no canto** mostram o nível do quadro (cinza · verd
 3. **Mão da frente: plano × missão.** O plano previa a mão "acompanhando a manopla com deslocamento de 1 px". A missão pede a manivela ligada à mão. Com 1 px, a manopla ficaria escondida dentro da mão e o giro não apareceria. **Solução (autonomia sobre mãos e manivela):** a mão segura a manopla, que gira com raio de 4 px em volta do cubo. Com isso, a manivela fica visível e ligada à mão nas 4 posições.
 
 ## Limitações conhecidas
-- **Mão da frente fora da vara:** para girar a manivela, a mão da frente sai do assento e vai para a manopla. A vara fica apoiada pela mão de trás no cabo e pelo molinete. É como se pesca com molinete, mas a vara tem só uma mão sobre ela.
-- **Saída para o IDLE:** do nível 1 para o IDLE, as mãos podem mover até **10 px** (pior caso: manivela embaixo). Isso só acontece no fim da briga, quando a CATCH ou a FRUSTRATION (ainda não produzidas) devem fazer a ponte.
-- **Nível 4:** a ponta se dobra até apontar para a água. É a curva máxima e plausível para um peixe grande, mas é a forma mais "exagerada" das quatro. **A avaliar na revisão.**
-- **ALE:** o carretel escuro do ALE (`#2c2c33`) fica sobre o moletom cinza escuro. O giro é lido pelo braço amarelo da manivela e pela mão, mais do que pelo carretel.
+- **Mão da frente fora da vara:** para girar a manivela, a mão da frente sai do assento e vai para a manopla. A vara fica apoiada pela mão de trás no cabo (com o cabo no quadril) e pelo molinete. **Aprovado pela direção criativa (11/11/2026).**
+- **Saída para o IDLE:**
+  - **Recolhimento vazio:** resolvido pela regra "completar a volta" (2 px). Restam só os casos raros de prioridade da lógica descritos naquela seção.
+  - **Fim da briga (captura, fuga ou linha arrebentada):** a ponte fica com a CATCH e a FRUSTRATION, ainda não produzidas.
+- **Nível 4:** a ponta se dobra até apontar para a água (~42° abaixo da horizontal), a curva máxima plausível para um peixe grande. **Mantido pela direção criativa (11/11/2026).** Curvas mais distribuídas foram testadas e liam como menos tensão.
+- **ALE:** o carretel escuro do ALE (`#2c2c33`) fica sobre o moletom cinza escuro, como no IDLE aprovado. O giro é lido pelo carretel claro, pelo braço amarelo da manivela e pela mão. Um reflexo no aro, com o cinza `#8a909a` da paleta, foi testado, mas quase não aparece na escala do jogo e destoaria do IDLE, CHARGE e CAST. **Visual atual mantido pela direção criativa (11/11/2026).**
 - **Mão da frente na posição 2 (frente):** ela encosta no contorno do carretel. Em ×1, a manopla fica escondida sob a mão, como em todas as posições, de propósito.
 - **Sem linha de pesca:** a linha, o peixe e os avisos de perigo continuam com o jogo, como no P1.
 - **Escala no jogo (×1 ou ×2):** continua em aberto (D10).

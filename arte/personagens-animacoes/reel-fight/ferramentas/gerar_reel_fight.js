@@ -490,7 +490,25 @@ const data = {
     posicoes: CRANK.map((C) => ({ posicao: C.pos, nome: C.nome })),
     msPorPosicao: CRANK_MS, msPorVolta: CRANK_MS * 4,
     segurando: 'loop das 4 posições do nível atual (1 → 2 → 3 → 4 → 1 …)',
-    soltando: 'a manivela para na posição atual; o nível continua acompanhando a tensão'
+    soltando: 'em FIGHTING: a manivela para na posição atual; o nível continua acompanhando a tensão (no recolhimento vazio vale a regra completarAVolta)'
+  },
+  // Regra "completar a volta" — APROVADA pela direção criativa (11/11/2026). Só para REELING_EMPTY.
+  completarAVolta: {
+    status: 'APROVADO — DIREÇÃO CRIATIVA (11/11/2026)',
+    aplicaSe: 'somente ao recolhimento da linha vazia (REELING_EMPTY, nível 1, índices 0–3); não vale para FIGHTING',
+    entrada: 'ao começar o recolhimento vazio a partir do IDLE, a animação sempre começa na posição 1 (índice 0)',
+    saidas: [
+      'conclusão: REELING_EMPTY → IDLE (linha recolhida)',
+      'soltura antecipada: REELING_EMPTY → WAITING (recolhimento interrompido; o P1 retoma a espera de onde parou)'
+    ],
+    finalizacao: 'nas duas saídas, a manivela continua girando no nível 1 (' + CRANK_MS + ' ms por posição) até mostrar a posição 1; no quadro seguinte o personagem volta ao IDLE. Se a saída acontecer já na posição 1, o IDLE é imediato',
+    duracaoMaximaMs: CRANK_MS * 3,
+    duracaoMediaMs: CRANK_MS * 1.5,
+    retomada: 'se a lógica voltar a REELING_EMPTY durante a finalização (o jogador segurou de novo além do limiar do P1), o loop continua da posição atual, sem voltar à posição 1 e sem salto',
+    toqueCurto: 'um toque curto durante a finalização não muda nada no visual: a lógica continua em WAITING e a volta termina normalmente',
+    somenteVisual: 'a finalização é só visual: lê o estado do P1 e nunca o altera; não reinicia nem pausa a espera, não emite eventos, não conta toques e não gera penalidades. O tempo da finalização é tempo de jogo (congela na pausa)',
+    prioridadeDaLogica: 'se a lógica pedir outra animação durante a finalização (fisgada em FIGHTING, carga em CHARGING), a troca é imediata: a finalização é abandonada e nunca atrasa a resposta. BITE mostra o IDLE (plano, seção 4), então uma mordida durante a finalização não a interrompe',
+    saltoDasMaos: 'saída pela posição 1 → IDLE: 2 px (antes da regra: até 10 px). Casos de prioridade da lógica (raros): fisgada a partir das posições 3 / 4: 10 / 6,7 px; carga a partir da posição 4: 13,6 px'
   },
   fisgada: {
     quando: 'transição BITE → FIGHTING do P1',

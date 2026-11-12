@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#101418">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Hangover Fishing — P1 com personagens</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../p1-pesca/style.css">
+</head>
+<body>
+  <!-- Área onde o Phaser cria o canvas do jogo -->
+  <div id="game"></div>
+
+  <!-- Botões fora do canvas: um toque aqui não pertence a nenhum jogador -->
+  <div id="top-buttons">
+    <button id="diag-button" type="button" aria-pressed="false" aria-label="Painel de diagnóstico">DIAG</button>
+    <button id="menu-button" type="button" aria-label="Abrir menu">☰ MENU</button>
+  </div>
+
+  <!-- Painel de diagnóstico (não captura toques) -->
+  <div id="diag" hidden>
+    <pre id="diag-p1" class="diag-player diag-left"></pre>
+    <pre id="diag-p2" class="diag-player diag-right"></pre>
+    <pre id="diag-footer"></pre>
+  </div>
+
+  <!-- Menu de teste (pausa a pescaria enquanto estiver aberto) -->
+  <div id="menu" hidden>
+    <div class="menu-panel" role="dialog" aria-label="Menu do protótipo">
+      <div class="menu-header">
+        <strong>P1 — Pesca com personagens</strong>
+        <button type="button" data-action="close">Fechar ✕</button>
+      </div>
+      <p class="menu-note">A pescaria fica pausada enquanto o menu está aberto.</p>
+      <div class="menu-row">
+        <button type="button" data-action="toggle" data-name="diag" aria-pressed="false">Diagnóstico</button>
+        <button type="button" data-action="toggle" data-name="som" aria-pressed="true">Som</button>
+        <button type="button" data-action="toggle" data-name="vibracao" aria-pressed="false">Vibração</button>
+        <button type="button" data-action="fullscreen">Tela cheia</button>
+      </div>
+      <details class="how">
+        <summary>Como jogar</summary>
+        <ol>
+          <li><b>Arremessar:</b> segure na sua metade (a barra de força vai e volta) e solte.</li>
+          <li><b>Esperar:</b> toques antes da mordida são ignorados. Segure para recolher a linha vazia.</li>
+          <li><b>Fisgar:</b> quando a boia afundar (borda piscando, bipe), faça um <b>novo</b> toque, rápido.</li>
+          <li><b>Brigar:</b> segure para recolher (tensão sobe), solte para aliviar (tensão desce).
+            Vermelho por muito tempo arrebenta a linha; azul por muito tempo deixa o peixe escapar.</li>
+          <li><b>Capturar:</b> traga o peixe até a margem.</li>
+        </ol>
+      </details>
+      <h3>Parâmetros de balanceamento</h3>
+      <div id="params" class="params"></div>
+      <div class="menu-row">
+        <button type="button" data-action="defaults">Restaurar padrão</button>
+        <button type="button" data-action="reset">Reiniciar sessão</button>
+        <button type="button" data-action="report">Ver relatório</button>
+      </div>
+      <div id="report" hidden>
+        <p class="menu-note">Selecione todo o texto e copie para o RESULTADOS.md.</p>
+        <textarea id="report-text" readonly></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tudo o que não é personagem vem do P1, sem cópias nem alterações -->
+  <!-- Phaser 3.90.0 (cópia local do P1) -->
+  <script src="../p1-pesca/lib/phaser.min.js"></script>
+  <!-- Entrada: módulos do P0, sem alterações -->
+  <script src="../p1-pesca/src/input/PlayerZone.js"></script>
+  <script src="../p1-pesca/src/input/TouchRouter.js"></script>
+  <!-- Lógica da pesca (independente do Phaser) -->
+  <script src="../p1-pesca/src/logic/config.js"></script>
+  <script src="../p1-pesca/src/logic/Random.js"></script>
+  <script src="../p1-pesca/src/logic/FishingPlayer.js"></script>
+  <script src="../p1-pesca/src/logic/FishingSession.js"></script>
+  <!-- Apresentação -->
+  <script src="../p1-pesca/src/audio/Sfx.js"></script>
+  <script src="../p1-pesca/src/ui/DiagnosticsPanel.js"></script>
+  <script src="../p1-pesca/src/ui/Menu.js"></script>
+  <script src="../p1-pesca/src/scenes/OrientationScene.js"></script>
+  <script src="../p1-pesca/src/scenes/FishingScene.js"></script>
+  <!-- Personagens animados (camada visual nova; só lê o estado da pescaria) -->
+  <script src="src/visual/CharacterAnimator.js"></script>
+  <script src="src/scenes/CharacterFishingScene.js"></script>
+  <!-- Inicialização do P1, sem alterações (cria o jogo com HF.FishingScene, agora a cena com personagens) -->
+  <script src="../p1-pesca/src/main.js"></script>
+</body>
+</html>

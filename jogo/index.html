@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0b2a3f">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Hangover Fishing</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+  <!-- Canvas do Phaser: o mar do menu e a partida -->
+  <div id="jogo"></div>
+
+  <!-- Telas (DOM por cima do canvas). Só a tela ativa recebe toques. -->
+  <div id="ui">
+    <section id="tela-carga" class="tela ativa" aria-live="polite">
+      <div class="coluna centro">
+        <p class="carregando">Carregando o lago…</p>
+        <p class="erro" id="erro-carga" hidden></p>
+      </div>
+    </section>
+
+    <section id="tela-menu" class="tela" aria-label="Menu principal">
+      <div class="coluna menu">
+        <img id="menu-logo" class="logo" alt="Hangover Fishing — coop arcade">
+        <div class="espaco-arte" aria-hidden="true"></div>
+        <nav class="botoes">
+          <button type="button" class="botao tabua" data-acao="1p">1 JOGADOR</button>
+          <button type="button" class="botao tabua" data-acao="2p">2 JOGADORES</button>
+          <button type="button" class="botao tabua" data-acao="catalogo">CATÁLOGO</button>
+          <button type="button" class="botao tabua" data-acao="opcoes">OPÇÕES</button>
+        </nav>
+        <p class="rodape">Versão de teste · Operação Madrugada</p>
+      </div>
+    </section>
+
+    <section id="tela-preparo" class="tela" aria-label="Preparar a pescaria">
+      <div class="coluna rolavel">
+        <h1 class="titulo" id="preparo-titulo">2 JOGADORES</h1>
+        <div id="preparo-conteudo"></div>
+        <div class="linha-botoes">
+          <button type="button" class="botao" data-acao="voltar">VOLTAR</button>
+          <button type="button" class="botao destaque" data-acao="comecar">COMEÇAR</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="tela-catalogo" class="tela" aria-label="Catálogo">
+      <div class="coluna rolavel">
+        <h1 class="titulo">CATÁLOGO</h1>
+        <p class="subtitulo" id="catalogo-progresso"></p>
+        <div class="abas" role="tablist">
+          <button type="button" class="aba ativa" data-aba="peixes" role="tab">PEIXES</button>
+          <button type="button" class="aba" data-aba="guia" role="tab">GUIA</button>
+          <button type="button" class="aba" data-aba="objetos" role="tab">OBJETOS</button>
+        </div>
+        <div id="catalogo-conteudo"></div>
+        <div class="linha-botoes"><button type="button" class="botao" data-acao="voltar">VOLTAR</button></div>
+      </div>
+      <div id="ficha" class="ficha" hidden role="dialog" aria-modal="true" aria-label="Ficha do peixe"></div>
+    </section>
+
+    <section id="tela-opcoes" class="tela" aria-label="Opções">
+      <div class="coluna rolavel">
+        <h1 class="titulo">OPÇÕES</h1>
+        <div id="opcoes-conteudo"></div>
+        <div class="linha-botoes"><button type="button" class="botao" data-acao="voltar">VOLTAR</button></div>
+      </div>
+    </section>
+
+    <section id="tela-girar" class="tela sobreposta" aria-live="assertive">
+      <div class="coluna centro">
+        <div class="celular-girando" aria-hidden="true"><span></span></div>
+        <p class="aviso-grande" id="girar-texto">Gire o celular para a horizontal</p>
+        <p class="aviso" id="girar-sub">A pescaria começa assim que a tela ficar deitada.</p>
+        <button type="button" class="botao" data-acao="girar-menu">VOLTAR AO MENU</button>
+      </div>
+    </section>
+
+    <section id="tela-pausa" class="tela sobreposta" aria-label="Pausa">
+      <div class="coluna larga rolavel">
+        <h1 class="titulo">PAUSA</h1>
+        <div class="linha-botoes acoes-pausa">
+          <button type="button" class="botao destaque" data-acao="continuar">CONTINUAR</button>
+          <button type="button" class="botao" data-acao="reiniciar">RECOMEÇAR</button>
+          <button type="button" class="botao" data-acao="sair">SAIR PARA O MENU</button>
+        </div>
+        <div id="pausa-conteudo"></div>
+      </div>
+    </section>
+
+    <section id="tela-resumo" class="tela sobreposta" aria-label="Fim da pescaria">
+      <div class="coluna centro estreita rolavel">
+        <h1 class="titulo">FIM DA PESCARIA</h1>
+        <div id="resumo-conteudo"></div>
+        <div class="lista-botoes">
+          <button type="button" class="botao destaque" data-acao="menu">MENU PRINCIPAL</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Durante a partida: único botão por cima do jogo (fora das zonas de toque dos jogadores) -->
+  <button type="button" id="botao-pausa" class="botao-pausa" aria-label="Pausar" hidden>II</button>
+
+  <!-- Phaser 3.90.0: a mesma cópia local do P1 -->
+  <script src="../prototipos/p1-pesca/lib/phaser.min.js"></script>
+  <!-- Do P1, sem alterações: entrada multitouch, lógica da pesca e sons -->
+  <script src="../prototipos/p1-pesca/src/input/PlayerZone.js"></script>
+  <script src="../prototipos/p1-pesca/src/input/TouchRouter.js"></script>
+  <script src="../prototipos/p1-pesca/src/logic/config.js"></script>
+  <script src="../prototipos/p1-pesca/src/logic/Random.js"></script>
+  <script src="../prototipos/p1-pesca/src/logic/FishingPlayer.js"></script>
+  <script src="../prototipos/p1-pesca/src/logic/FishingSession.js"></script>
+  <script src="../prototipos/p1-pesca/src/audio/Sfx.js"></script>
+  <!-- Do P1 com personagens (aprovado), sem alterações: o animador -->
+  <script src="../prototipos/p1-personagens/src/visual/CharacterAnimator.js"></script>
+  <!-- Novos: lógica do jogo -->
+  <script src="src/logica/DadosPesca.js"></script>
+  <script src="src/logica/PescadorRegional.js"></script>
+  <script src="src/logica/SessaoJogo.js"></script>
+  <script src="src/logica/Armazenamento.js"></script>
+  <!-- Narrativa: motor, Sirius e as falas (dados separados da lógica) -->
+  <script src="src/narrativa/Sirius.js"></script>
+  <script src="src/narrativa/Falas.js"></script>
+  <script src="src/narrativa/falas/captura.js"></script>
+  <script src="src/narrativa/falas/fracasso.js"></script>
+  <script src="src/narrativa/falas/pesca.js"></script>
+  <script src="src/narrativa/falas/conversas.js"></script>
+  <script src="src/narrativa/falas/sirius.js"></script>
+  <script src="src/narrativa/falas/reacoes.js"></script>
+  <script src="src/narrativa/Narrador.js"></script>
+  <!-- Novos: áudio, visual, cenas e interface -->
+  <script src="src/audio/AudioJogo.js"></script>
+  <script src="src/visual/Recortes.js"></script>
+  <script src="src/cenas/CenaCarga.js"></script>
+  <script src="src/cenas/CenaMar.js"></script>
+  <script src="src/cenas/CenaPartida.js"></script>
+  <script src="src/ui/Interface.js"></script>
+  <script src="src/main.js"></script>
+</body>
+</html>

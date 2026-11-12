@@ -1,0 +1,416 @@
+{
+  "animacao": "frustration",
+  "quadro": {
+    "largura": 96,
+    "altura": 96
+  },
+  "spritesheet": {
+    "arquivo": "<personagem>_frustration_spritesheet.png",
+    "colunas": 4,
+    "linhas": 1,
+    "ordem": {
+      "alemao": [
+        "1 tranco",
+        "2 mão subindo",
+        "3 mão no boné",
+        "4 volta"
+      ],
+      "ale": [
+        "1 ombros caem",
+        "2 mão subindo",
+        "3 mão na nuca",
+        "4 volta"
+      ]
+    }
+  },
+  "ancora": {
+    "phaserOrigin": [
+      0.5,
+      1
+    ],
+    "deslocamentoV4": [
+      30,
+      32
+    ],
+    "solaY": 94,
+    "pes": {
+      "x0": 39,
+      "x1": 56,
+      "y0": 91,
+      "y1": 95
+    },
+    "centroPesX": 47.5
+  },
+  "quando": "estados ESCAPED (fuga ou mordida perdida) e LINE_BROKEN do P1; a mesma animação nos dois casos. No rompimento, o jogo desenha a linha partida a partir da ponta da vara do quadro atual",
+  "reproducao": {
+    "tipo": "pontual com pose mantida: entrada 1 → 2 → 3; o quadro 3 fica na tela até o fim do cartão de resultado; quando o P1 volta ao IDLE, a saída toca 2 → 4 e então o IDLE",
+    "entrada": [
+      {
+        "indice": 0,
+        "quadro": 1,
+        "ms": 150
+      },
+      {
+        "indice": 1,
+        "quadro": 2,
+        "ms": 200
+      },
+      {
+        "indice": 2,
+        "quadro": 3,
+        "ms": {
+          "minimo": 600,
+          "mantidoAteOFimDoCartao": true
+        }
+      }
+    ],
+    "poseMantida": {
+      "indice": 2,
+      "quadro": 3
+    },
+    "saida": {
+      "quadros": [
+        {
+          "indice": 1,
+          "quadro": 2,
+          "ms": 100
+        },
+        {
+          "indice": 3,
+          "quadro": 4,
+          "ms": 100
+        }
+      ],
+      "depois": "idle",
+      "quando": "transição ESCAPED/LINE_BROKEN → IDLE do P1 (fim do cartão de 1600 ms). A saída é só visual (200 ms): não atrasa a lógica; se a lógica pedir outra animação (carga), a troca é imediata"
+    },
+    "totalMinimoMs": 1150,
+    "noCartaoDe1600ms": {
+      "quadro1": 150,
+      "quadro2": 200,
+      "quadro3Mantido": 1250,
+      "depoisDoCartao": {
+        "quadro2": 100,
+        "quadro4": 100,
+        "entao": "IDLE"
+      }
+    },
+    "cartaoPulado": "se o jogador pular o cartão (toque após 0,6 s), o P1 começa a carga: a animação é interrompida e entra o CHARGE (plano, seção 4), sem tocar o quadro 4"
+  },
+  "personalidade": {
+    "alemao": "espontâneo e expansivo: tranco da vara para cima, corpo recua 1 px, mão da frente vai ao boné com o cotovelo alto e aberto; a vara fica largada, pendurada na mão de trás (~30° abaixo da horizontal)",
+    "ale": "contido e resignado: ombros caem 1 px, a mão de trás solta o cabo e vai coçar a nuca, cotovelo junto à cabeça; a vara fica baixa, quase na horizontal, segura só pelo molinete"
+  },
+  "pontos": {
+    "alemao": [
+      {
+        "indice": 0,
+        "quadro": 1,
+        "nome": "tranco",
+        "pontaDaVara": [
+          72,
+          33
+        ],
+        "cabo": [
+          41,
+          71
+        ],
+        "maoDeTras": [
+          45,
+          66
+        ],
+        "maoDaFrente": [
+          54,
+          55
+        ],
+        "varaSeguraPor": "as duas mãos",
+        "maoNaCabeca": false,
+        "anguloVaraGraus": 51,
+        "inclinacaoPx": -1,
+        "ombrosCaidosPx": 0
+      },
+      {
+        "indice": 1,
+        "quadro": 2,
+        "nome": "mão subindo",
+        "pontaDaVara": [
+          82,
+          71
+        ],
+        "cabo": [
+          39,
+          66
+        ],
+        "maoDeTras": [
+          45,
+          67
+        ],
+        "maoDaFrente": [
+          56,
+          48
+        ],
+        "varaSeguraPor": "mão de trás (cabo)",
+        "maoNaCabeca": false,
+        "anguloVaraGraus": -6,
+        "inclinacaoPx": -1,
+        "ombrosCaidosPx": 0
+      },
+      {
+        "indice": 2,
+        "quadro": 3,
+        "nome": "mão no boné",
+        "pontaDaVara": [
+          77,
+          87
+        ],
+        "cabo": [
+          40,
+          65
+        ],
+        "maoDeTras": [
+          45,
+          68
+        ],
+        "maoDaFrente": [
+          51,
+          41
+        ],
+        "varaSeguraPor": "mão de trás (cabo)",
+        "maoNaCabeca": true,
+        "anguloVaraGraus": -30,
+        "inclinacaoPx": -1,
+        "ombrosCaidosPx": 0
+      },
+      {
+        "indice": 3,
+        "quadro": 4,
+        "nome": "volta",
+        "pontaDaVara": [
+          81,
+          60
+        ],
+        "cabo": [
+          39,
+          69
+        ],
+        "maoDeTras": [
+          45,
+          68
+        ],
+        "maoDaFrente": [
+          55,
+          57
+        ],
+        "varaSeguraPor": "mão de trás (cabo)",
+        "maoNaCabeca": false,
+        "anguloVaraGraus": 12,
+        "inclinacaoPx": 0,
+        "ombrosCaidosPx": 0
+      }
+    ],
+    "ale": [
+      {
+        "indice": 0,
+        "quadro": 1,
+        "nome": "ombros caem",
+        "pontaDaVara": [
+          81,
+          61
+        ],
+        "cabo": [
+          39,
+          69
+        ],
+        "maoDeTras": [
+          43,
+          60
+        ],
+        "maoDaFrente": [
+          54,
+          66
+        ],
+        "varaSeguraPor": "mão da frente (molinete)",
+        "maoNaCabeca": false,
+        "anguloVaraGraus": 11,
+        "inclinacaoPx": 0,
+        "ombrosCaidosPx": 1
+      },
+      {
+        "indice": 1,
+        "quadro": 2,
+        "nome": "mão subindo",
+        "pontaDaVara": [
+          82,
+          68
+        ],
+        "cabo": [
+          39,
+          68
+        ],
+        "maoDeTras": [
+          42,
+          53
+        ],
+        "maoDaFrente": [
+          54,
+          68
+        ],
+        "varaSeguraPor": "mão da frente (molinete)",
+        "maoNaCabeca": false,
+        "anguloVaraGraus": 0,
+        "inclinacaoPx": 0,
+        "ombrosCaidosPx": 1
+      },
+      {
+        "indice": 2,
+        "quadro": 3,
+        "nome": "mão na nuca",
+        "pontaDaVara": [
+          82,
+          72
+        ],
+        "cabo": [
+          39,
+          67
+        ],
+        "maoDeTras": [
+          40,
+          44
+        ],
+        "maoDaFrente": [
+          54,
+          69
+        ],
+        "varaSeguraPor": "mão da frente (molinete)",
+        "maoNaCabeca": true,
+        "anguloVaraGraus": -6,
+        "inclinacaoPx": 0,
+        "ombrosCaidosPx": 1
+      },
+      {
+        "indice": 3,
+        "quadro": 4,
+        "nome": "volta",
+        "pontaDaVara": [
+          81,
+          59
+        ],
+        "cabo": [
+          39,
+          68
+        ],
+        "maoDeTras": [
+          44,
+          62
+        ],
+        "maoDaFrente": [
+          54,
+          65
+        ],
+        "varaSeguraPor": "mão da frente (molinete)",
+        "maoNaCabeca": false,
+        "anguloVaraGraus": 12,
+        "inclinacaoPx": 0,
+        "ombrosCaidosPx": 0
+      }
+    ]
+  },
+  "continuidade": {
+    "alemao": {
+      "passosDasMaosPx": [
+        {
+          "de": "IDLE",
+          "para": "quadro 1",
+          "maosPx": 8
+        },
+        {
+          "de": "quadro 1",
+          "para": "quadro 2",
+          "maosPx": 7.3
+        },
+        {
+          "de": "quadro 2",
+          "para": "quadro 3",
+          "maosPx": 8.6
+        },
+        {
+          "de": "quadro 3",
+          "para": "quadro 2",
+          "maosPx": 8.6
+        },
+        {
+          "de": "quadro 2",
+          "para": "quadro 4",
+          "maosPx": 9.1
+        },
+        {
+          "de": "quadro 4",
+          "para": "IDLE",
+          "maosPx": 6.1
+        }
+      ],
+      "entradaVindaDoReelFightPx": {
+        "fuga (nível 1)": [
+          10,
+          14.6,
+          18,
+          14.6
+        ],
+        "linha rompida (nível 4)": [
+          7.3,
+          11.2,
+          15.1,
+          12.5
+        ]
+      }
+    },
+    "ale": {
+      "passosDasMaosPx": [
+        {
+          "de": "IDLE",
+          "para": "quadro 1",
+          "maosPx": 8.2
+        },
+        {
+          "de": "quadro 1",
+          "para": "quadro 2",
+          "maosPx": 7.1
+        },
+        {
+          "de": "quadro 2",
+          "para": "quadro 3",
+          "maosPx": 9.2
+        },
+        {
+          "de": "quadro 3",
+          "para": "quadro 2",
+          "maosPx": 9.2
+        },
+        {
+          "de": "quadro 2",
+          "para": "quadro 4",
+          "maosPx": 9.2
+        },
+        {
+          "de": "quadro 4",
+          "para": "IDLE",
+          "maosPx": 6.1
+        }
+      ],
+      "entradaVindaDoReelFightPx": {
+        "fuga (nível 1)": [
+          9.2,
+          9.2,
+          9.2,
+          9.2
+        ],
+        "linha rompida (nível 4)": [
+          8,
+          8,
+          8,
+          8
+        ]
+      }
+    }
+  }
+}
