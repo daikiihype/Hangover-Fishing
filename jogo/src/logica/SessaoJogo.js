@@ -15,6 +15,8 @@
   const FishingSession = HF.FishingSession || req('../../../prototipos/p1-pesca/src/logic/FishingSession.js');
   const Random = HF.Random || req('../../../prototipos/p1-pesca/src/logic/Random.js');
   const PescadorRegional = HF.PescadorRegional || req('./PescadorRegional.js');
+  const PontosDeInteresse = HF.PontosDeInteresse || req('./PontosDeInteresse.js');
+  const MAX_DT_PONTOS = 250;              // depois de uma pausa, o relógio do lago não dá saltos
 
   /** Cópia exata do mixSeed do P1 (FishingSession.js), para as sementes serem as mesmas. */
   function mixSeed(seed, offset) {
@@ -41,14 +43,30 @@
       this.t0 = t;
       this.seq = 0;
       this.log = [];
+      // pontos de interesse: semente PRÓPRIA (a sequência de sorteios da pesca não muda)
+      if (!this.pontos) {
+        this.pontos = new PontosDeInteresse({ seed: mixSeed(this.seed, 77), config: this.config });
+        this.pontos.on((ev) => { if (this.jogo.regioes) this._record(Object.assign({ time: this.now() }, ev, { ponto: ev.ponto ? Object.assign({}, ev.ponto) : ev.ponto })); });
+      } else this.pontos.reiniciar(mixSeed(this.seed, 77));
+      this._ultimoT = null;
       const nomes = { alemao: 'ALEMÃO', ale: 'ALE' };
       const make = (id, seedOffset) => new PescadorRegional({
         id, label: nomes[this.jogo.personagens[id]] || id, config: this.config, time: t,
         rng: new Random(mixSeed(this.seed, seedOffset)),
         emit: (entry) => this._record(entry),
-        regioes: this.jogo.regioes, isca: this.jogo.iscas[id]
+        regioes: this.jogo.regioes, isca: this.jogo.iscas[id],
+        consultarPonto: (jogador, distancia) => (this.jogo.regioes && this.ids.includes(jogador) ? this.pontos.consultar(jogador, distancia) : null)
       });
       this.players = { P1: make('P1', 1), P2: make('P2', 2) };
+    }
+
+    /** Igual ao P1 + o relógio dos pontos de interesse (só corre quando a sessão é atualizada, ou seja, fora da pausa). */
+    update(t) {
+      t = t != null ? t : this.now();
+      const dt = this._ultimoT == null ? 0 : Math.max(0, Math.min(MAX_DT_PONTOS, t - this._ultimoT));
+      this._ultimoT = t;
+      if (this.jogo && this.jogo.regioes && this.pontos) this.pontos.avancar(dt);
+      super.update(t);
     }
 
     get ids() { return this.jogo.modo === 1 ? ['P1'] : ['P1', 'P2']; }

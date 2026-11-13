@@ -165,8 +165,17 @@
     }
 
     htmlGuia() {
-      let h = '<div class="painel"><h2>Como funciona</h2><p>A <b>força do arremesso</b> decide onde a boia cai: curto = <span class="chip margem">MARGEM</span>, médio = <span class="chip aberta">ÁGUAS ABERTAS</span>, longo = <span class="chip fundo">ÁGUAS PROFUNDAS</span>. A cor do alvo e da barra de força mostra a região enquanto você carrega.</p>' +
-        '<p>A <b>isca</b> muda quais peixes mordem e quão rápido. Nenhuma isca garante peixe: a briga continua sendo sua.</p></div>';
+      let h = '<div class="painel"><h2>Como funciona</h2><p>A <b>força do arremesso</b> decide onde a boia cai: curto = <span class="chip margem">MARGEM RASA</span>, médio = <span class="chip aberta">ÁGUAS ABERTAS</span> (Baía dos Lírios e Curva das Pedras), longo = <span class="chip fundo">POÇO PROFUNDO</span>. A cor do alvo e da barra de força mostra o lugar enquanto você carrega.</p>' +
+        '<p>A <b>isca</b> muda quais peixes mordem e quão rápido. Nenhuma isca garante peixe: a briga continua sendo sua.</p>' +
+        '<p>Fique de olho na água: <b>pontos de interesse</b> (bolhas, cardumes, sombras...) aparecem nas duas metades ao mesmo tempo, na mesma distância. A boia que pousa em cima ganha uma vantagem só naquele arremesso.</p></div>';
+      h += '<div class="painel"><h2>Os lugares do lago</h2>' + D.ZONAS.map((z) => {
+        const ate = z.ate === Infinity ? 'de ' + z.de + ' m em diante' : (z.de ? 'de ' + z.de + ' a ' + z.ate + ' m' : 'até ' + z.ate + ' m');
+        return '<p><b>' + esc(z.nome) + '</b> <small>(' + ate + ')</small> — ' + esc(z.resumo) + '</p>';
+      }).join('') + '</div>';
+      const T = (root.HF.PontosDeInteresse && root.HF.PontosDeInteresse.TIPOS) || {};
+      h += '<div class="painel"><h2>Pontos de interesse</h2>' + Object.values(T).map((t) =>
+        '<p><b>' + esc(t.nome) + '</b> <small>(' + t.zonas.map((z) => D.zonaPorId[z].nome).join(', ') + ')</small> — ' + esc(t.dica) + '</p>').join('') +
+        '<p class="nota">Duram uns 20 segundos. Acertar exige mirar a distância com a força do arremesso. Nada garante a captura.</p></div>';
       for (const r of D.ORDEM_REGIOES) {
         const reg = D.REGIOES[r], prob = D.probabilidades(r, 'minhoca');
         const faixa = r === 'margem' ? 'menos de 14 m' : r === 'aberta' ? 'de 14 a 22 m' : '22 m ou mais';
@@ -234,7 +243,10 @@
         alt('efeitos', 'Efeitos sonoros', 'LIGADOS', 'DESLIGADOS') + alt('musica', 'Música', 'LIGADA', 'DESLIGADA') + alt('vozes', 'Vozes', 'LIGADAS', 'DESLIGADAS') +
         '<p class="nota">Vozes: balbucios e choro do Sirius (8-bit) e os bipes dos diálogos. Trilha, efeitos e vozes são sintetizados na hora (provisórios, sem arquivos de áudio).</p></div>' +
         '<div class="painel"><h2>Jogo</h2>' + alt('regioes', 'Regiões de pesca', 'LIGADAS', 'DESLIGADAS') +
-        '<p class="nota">Desligadas: o lago inteiro funciona como as águas abertas (o jogo tradicional), para comparar.</p>' +
+        '<p class="nota">Desligadas: o lago inteiro funciona como as águas abertas (o jogo tradicional), para comparar. Sem regiões também não há pontos de interesse.</p>' +
+        alt('dicas', 'Dicas na tela', 'LIGADAS', 'DESLIGADAS') +
+        '<div class="linha-opcao"><label for="op-rever">Tutorial</label><button type="button" id="op-rever" class="botao">REVER DICAS</button></div>' +
+        '<p class="nota">As dicas aparecem nas primeiras jogadas e somem depois de 3 acertos de cada etapa. "Rever dicas" mostra tudo de novo.</p>' +
         alt('vibracao', 'Vibração', 'LIGADA', 'DESLIGADA') + '<p class="nota">A vibração é do aparelho inteiro (chega às mãos dos dois). No iPhone o navegador não permite.</p></div>' +
         '<div class="painel"><h2>Catálogo</h2><p>' + this.app.catalogo.descobertos() + ' de ' + D.ESPECIES.length + ' peixes descobertos.</p>' +
         '<div class="linha-botoes"><button type="button" class="botao" id="op-apagar">APAGAR CATÁLOGO</button></div></div>';
@@ -249,6 +261,12 @@
         this.app.audio.clique(true);
         this.desenharOpcoes();
       }));
+      const rever = $('#op-rever');
+      rever.addEventListener('click', () => {
+        this.app.audio.clique(true);
+        this.app.arm.gravar('hf.tutorial.v1', { arremessos: 0, fisgadas: 0, capturas: 0 });
+        rever.textContent = 'AS DICAS VOLTAM NA PRÓXIMA PESCARIA';
+      });
       const apagar = $('#op-apagar');
       apagar.addEventListener('click', () => {
         this.app.audio.clique();

@@ -162,11 +162,14 @@ html, body {
 @keyframes girar { 0%, 25% { transform: rotate(0deg); } 55%, 100% { transform: rotate(-90deg); } }
 
 /* ---------------- partida ---------------- */
+/* pausa: discreta, no canto superior direito (área de toque de 40 px) */
 .botao-pausa {
-  position: fixed; z-index: 5; top: max(6px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%);
-  width: 52px; height: 40px; font-family: var(--fonte); font-weight: bold; font-size: 16px; letter-spacing: 2px; color: #fff;
-  background: rgba(11, 22, 48, 0.8); border: 2px solid var(--dourado); cursor: pointer;
+  position: fixed; z-index: 5; top: max(6px, env(safe-area-inset-top)); right: max(6px, env(safe-area-inset-right));
+  width: 40px; height: 40px; padding: 0; font-family: var(--fonte); font-weight: bold; font-size: 14px; letter-spacing: 1px; color: #fff1c9;
+  background: rgba(11, 22, 48, 0.55); border: 2px solid rgba(226, 183, 90, 0.85); cursor: pointer;
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.3);
 }
+.botao-pausa:active { background: rgba(11, 22, 48, 0.85); }
 .resumo-jogador h2 { display: flex; align-items: center; gap: 8px; }
 .resumo-jogador img { width: 40px; height: 40px; image-rendering: pixelated; }
 .novas { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }

@@ -64,24 +64,45 @@
   // ---------------------------------------------------------------- regiões
   // Plano de regiões (docs/PLANO_REGIOES_DE_PESCA.md, tabela 4), com as espécies no lugar dos perfis.
   // faixaPeso: fração da faixa de peso de cada espécie (0–1 = a faixa inteira; 1,2 = passa do máximo).
+  // Nomes de lugar (Operação Nova Identidade): só a apresentação mudou; tabelas e limites são os mesmos.
   const REGIOES = {
     margem: {
-      id: 'margem', nome: 'Margem', curta: 'MARGEM', ate: 14, espera: [2000, 5000], faixaPeso: [0, 0.6], forca: 1, cansaco: 1,
+      id: 'margem', nome: 'Margem Rasa', curta: 'MARGEM RASA', ate: 14, espera: [2000, 5000], faixaPeso: [0, 0.6], forca: 1, cansaco: 1,
       chances: { lambari: 30, tilapia: 30, carpa: 10, traira: 30, objeto: 3 },
       resumo: 'Mais mordidas, peixes menores, brigas curtas.'
     },
     aberta: {
       id: 'aberta', nome: 'Águas abertas', curta: 'ÁGUAS ABERTAS', ate: 22, espera: null /* = P1 */, faixaPeso: [0, 1], forca: 1, cansaco: 1,
       chances: { tilapia: 45, carpa: 25, traira: 30 },
-      resumo: 'O lago de sempre: mistura equilibrada.'
+      resumo: 'O lago de sempre: mistura equilibrada. Inclui a Baía dos Lírios e a Curva das Pedras.'
     },
     fundo: {
-      id: 'fundo', nome: 'Águas profundas', curta: 'ÁGUAS PROFUNDAS', ate: Infinity, espera: [6500, 12000], faixaPeso: [0.4, 1.1], forca: 1.15, cansaco: 1,
+      id: 'fundo', nome: 'Poço Profundo', curta: 'POÇO PROFUNDO', ate: Infinity, espera: [6500, 12000], faixaPeso: [0.4, 1.1], forca: 1.15, cansaco: 1,
       chances: { tilapia: 10, carpa: 15, bagre: 45, traira: 30, objeto: 2 },
       resumo: 'Espera longa, peixes pesados e fortes.'
     }
   };
   const ORDEM_REGIOES = ['margem', 'aberta', 'fundo'];
+
+  // Zonas visuais do lago (Operação Nova Identidade): 4 lugares com identidade própria sobre as
+  // 3 regiões mecânicas. Lírios e Pedras usam a tabela das águas abertas (referência do P1);
+  // a diferença de jogo entre elas vem dos pontos de interesse típicos de cada uma.
+  const ZONAS = [
+    { id: 'rasa', nome: 'Margem Rasa', curta: 'MARGEM RASA', de: 0, ate: 14, regiao: 'margem',
+      resumo: 'Água clara, fundo de areia, cardumes pequenos. Mordidas frequentes.' },
+    { id: 'lirios', nome: 'Baía dos Lírios', curta: 'BAÍA DOS LÍRIOS', de: 14, ate: 18, regiao: 'aberta',
+      resumo: 'Vitórias-régias e sombra. Peixes se escondem perto das plantas.' },
+    { id: 'pedras', nome: 'Curva das Pedras', curta: 'CURVA DAS PEDRAS', de: 18, ate: 22, regiao: 'aberta',
+      resumo: 'Pedras e correnteza da entrada do rio. Predadores rondam; a isca artificial brilha aqui.' },
+    { id: 'poco', nome: 'Poço Profundo', curta: 'POÇO PROFUNDO', de: 22, ate: Infinity, regiao: 'fundo',
+      resumo: 'Água escura, troncos submersos. Risco maior, recompensa maior.' }
+  ];
+  const zonaPorId = Object.fromEntries(ZONAS.map((z) => [z.id, z]));
+  /** Zona visual pela distância de POUSO da boia. */
+  function zonaDaDistancia(m) {
+    for (const z of ZONAS) if (m < z.ate) return z.id;
+    return 'poco';
+  }
 
   /** Região pela distância de POUSO da boia (D1/D2 da missão): < 14 m · 14–22 m · ≥ 22 m. */
   function regiaoDaDistancia(m) {
@@ -148,8 +169,8 @@
     return { regioes, iscas, melhor };
   }
 
-  const api = { ESPECIES, OBJETOS, COMPORTAMENTO_OBJETO, REGIOES, ORDEM_REGIOES, ISCAS,
-    especiePorId, objetoPorId, iscaPorId, regiaoDaDistancia, tabela, probabilidades, guiaDaEspecie };
+  const api = { ESPECIES, OBJETOS, COMPORTAMENTO_OBJETO, REGIOES, ORDEM_REGIOES, ISCAS, ZONAS, zonaPorId,
+    especiePorId, objetoPorId, iscaPorId, regiaoDaDistancia, zonaDaDistancia, tabela, probabilidades, guiaDaEspecie };
   root.HF = root.HF || {};
   root.HF.DadosPesca = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

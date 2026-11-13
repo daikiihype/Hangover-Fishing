@@ -12,7 +12,8 @@
  *   - dormindo:  sem balbucios e sem choro.
  *
  * Regras de equilíbrio do choro (GDD 3.8): frequência baixa, nunca nos primeiros 75 s,
- * no mínimo 4 min entre um choro e outro, duração curta (8–13 s).
+ * no mínimo 4 min entre um choro e outro, duração curta: ~2,5 s inquieto + 6–8,5 s chorando
+ * + 2,5–4 s acalmando (11–15 s no total, que é o tempo em que a Maria fica ocupada).
  */
 (function (root) {
   'use strict';

@@ -99,7 +99,7 @@
     C('captura', { sujeito: A, tamanho: ['pequeno', 'medio'] }, [[M, 'Lucas pescando é mais bonito que o peixe.', 'feliz'], [A, 'Ouviu isso? Ela disse que eu sou bonito.', 'rindo']], { w: 0.5 }),
 
     // ================================================================ DISPUTA (2 jogadores)
-    C('captura', { sujeito: A, virou: true }, [[A, 'Passei! Agora sou eu na frente!', 'rindo'], [E, 'Aproveita. Dura pouco.', 'neutro']], { p: 4, m: 2 }),
+    C('captura', { sujeito: A, virou: true }, [[A, 'Passei! Agora sou eu na frente!', 'rindo'], [E, 'Aproveita. Placar de pescaria muda com o vento.', 'neutro']], { p: 4, m: 2 }),
     C('captura', { sujeito: A, virou: true }, [[A, 'Virou o jogo! Virou!', 'rindo'], [M, 'Pai, o Lucas passou você.', 'rindo'], [E, 'Ouvi. A lagoa inteira ouviu.', 'neutro']], { p: 4, m: 2 }),
     C('captura', { sujeito: E, virou: true }, [[E, 'Agora eu passei, Alemão. Sem pressa.', 'neutro'], [A, 'Volto já. Volto já.', 'bravo']], { p: 4, m: 2 }),
     C('captura', { sujeito: E, virou: true }, [[E, 'Placar arrumado.', 'neutro'], [A, 'Arrumado pra quem?', 'bravo']], { p: 4, m: 2 }),
@@ -121,7 +121,7 @@
     // ================================================================ 1 JOGADOR: quem assiste comenta
     C('captura', { protagonista: A, tamanho: ['medio', 'grande'] }, [[E, 'Boa, Alemão. Daqui de fora parece fácil.', 'neutro'], [A, 'E é fácil. Pra mim.', 'rindo']], { m: 1 }),
     C('captura', { protagonista: A, tamanho: 'pequeno' }, [[E, 'Tô aqui torcendo. Pelo peixe.', 'rindo']], { m: 1 }),
-    C('captura', { protagonista: E, tamanho: ['medio', 'grande'] }, [[A, 'Mestre é mestre.', 'feliz'], [E, 'Para de puxar saco e anota.', 'rindo']], { m: 1 }),
+    C('captura', { protagonista: E, tamanho: ['medio', 'grande'] }, [[A, 'Mestre é mestre.', 'feliz'], [E, 'Elogio aceito. Agora anota a técnica.', 'rindo']], { m: 1 }),
     C('captura', { protagonista: E, tamanho: 'pequeno' }, [[A, 'Esse aí eu pegava de olho fechado.', 'rindo'], [E, 'Então pega, Alemão. A vara tá aqui.', 'neutro']], { m: 1 })
   ]);
 

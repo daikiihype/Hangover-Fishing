@@ -25,7 +25,7 @@
     C('fuga', { sujeito: E }, [[A, 'Escapou? Acontece até com os experientes!', 'rindo'], [E, 'Principalmente com eles.', 'neutro']]),
     C('fuga', { sujeito: E }, [[M, 'Pai, cadê o peixe?', 'surpreso'], [E, 'Foi visitar a família dele.', 'neutro']]),
     C('fuga', { sujeito: E }, [[E, 'Deixei ir. Tava com cara de quem tinha compromisso.', 'neutro']]),
-    C('fuga', { sujeito: E, sirius: 'acordado' }, [[S, '{balbucio:bobo}'], [A, 'Ele fez o barulho da pescaria de hoje.', 'rindo'], [E, 'Ele fez carinho, Alemão. Você que não entende bebê.', 'neutro']], { w: 0.8 }),
+    C('fuga', { sujeito: E, sirius: 'acordado' }, [[S, '{balbucio:bobo}'], [A, 'Ele fez o barulho da pescaria de hoje.', 'rindo'], [E, 'Ele fez carinho, Alemão. Você que não fala a língua dele.', 'neutro']], { w: 0.8 }),
     C('fuga', { sujeito: E, grande: true }, [[E, 'Esse era bom. Vou lembrar dele.', 'frustrado'], [A, 'Eu vi! Era um monstro!', 'surpreso']]),
     C('fuga', { sujeito: E, repetido: true }, [[E, 'Hoje eles tão me testando.', 'frustrado'], [M, 'Pai, você tá distraído.', 'preocupado'], [E, 'Tô observando, Maria. É diferente.', 'neutro']]),
     C('fuga', { sujeito: E, outroCapturou: true }, [[A, 'Um pesca, o outro assiste o peixe ir embora.', 'rindo'], [E, 'Aproveita, Alemão. Hoje é seu dia.', 'neutro']], { m: 2 }),

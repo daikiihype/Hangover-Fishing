@@ -14,7 +14,7 @@ const L = path.join(__dirname, '..', 'src');
 const Dados = require(path.join(L, 'logica', 'DadosPesca.js'));
 const SessaoJogo = require(path.join(L, 'logica', 'SessaoJogo.js'));
 const Falas = require(path.join(L, 'narrativa', 'Falas.js'));
-for (const f of ['captura', 'fracasso', 'pesca', 'conversas', 'sirius', 'reacoes']) require(path.join(L, 'narrativa', 'falas', f + '.js'));
+for (const f of ['captura', 'fracasso', 'pesca', 'conversas', 'sirius', 'reacoes', 'mundo', 'familia']) require(path.join(L, 'narrativa', 'falas', f + '.js'));
 const Sirius = require(path.join(L, 'narrativa', 'Sirius.js'));
 const Narrador = require(path.join(L, 'narrativa', 'Narrador.js'));
 
@@ -33,7 +33,7 @@ test('Dados: toda cena tem gatilho conhecido, falantes válidos, emoções e mar
   const gat = new Set(Object.keys(Narrador.CATEGORIA));
   const quem = new Set(['alemao', 'ale', 'maria', 'sirius', 'S', 'O']);
   const emo = new Set(['neutro', 'serio', 'feliz', 'rindo', 'surpreso', 'preocupado', 'triste', 'bravo', 'frustrado']);
-  const marc = /\{(peixe|Peixe|um|Um|o|O|kg|m|isca|regiao|placar|vocS|vocO|balbucio(:(feliz|curioso|protesto|surpresa|bobo|sono|choro))?)\}/g;
+  const marc = /\{(peixe|Peixe|um|Um|o|O|kg|m|isca|regiao|zona|placar|vocS|vocO|balbucio(:(feliz|curioso|protesto|surpresa|bobo|sono|choro))?)\}/g;
   for (const c of cenas) {
     assert.ok(gat.has(c.g), c.id + ': gatilho ' + c.g);
     assert.ok(c.f.length >= 1 && c.f.length <= 4, c.id + ': ' + c.f.length + ' falas');
@@ -56,12 +56,15 @@ test('Cânone: Maria chama Lucas de "Lucas" (nunca "Alemão"); ALE chama de "Ale
   assert.deepStrictEqual(linhasDe('ale').filter((x) => /\bLucas\b/.test(x.t)).map((x) => x.t), []);
 });
 
-test('Cânone: Lucas não usa vocativo para ALE nem para Maria (forma de tratamento ainda pendente no GDD)', () => {
-  assert.deepStrictEqual(linhasDe('alemao').filter((x) => /\bALE\b|\bMaria\b|sogr|\bamor\b|\bvovô\b/i.test(x.t)).map((x) => x.t), []);
+test('Cânone: Lucas chama Maria de "Maria" (Operação Nova Identidade) e não usa vocativo para o ALE (ainda pendente)', () => {
+  assert.deepStrictEqual(linhasDe('alemao').filter((x) => /\bALE\b|sogr|\bamor\b|\bvovô\b|\bvô\b/i.test(x.t)).map((x) => x.t), []);
+  // se o Lucas chama a esposa, é "Maria" (nenhum outro apelido)
+  assert.deepStrictEqual(linhasDe('alemao').filter((x) => /\b(mor|benzinho|querida|gata|nega|princesa)\b/i.test(x.t)).map((x) => x.t), []);
+  assert.ok(linhasDe('alemao').some((x) => /\bMaria\b/.test(x.t)), 'o Lucas nunca chama a Maria pelo nome');
 });
 
 test('Cânone: todos chamam o bebê só de "Sirius" (nenhum apelido)', () => {
-  const apelidos = /\b(nenê|neném|bebezinho|bebê|garotão|campeão|filhão|netinho|baixinho|pequenininho|princeso|gordinho)\b/i;
+  const apelidos = /(?<!\p{L})(nenê|neném|bebezinho|bebê|garotão|campeão|filhão|netinho|pequenininho|princeso|gordinho)(?!\p{L})/iu;
   assert.deepStrictEqual(cenas.flatMap((c) => c.f.filter((l) => l[0] !== 'sirius' && apelidos.test(l[1])).map((l) => l[1])), []);
 });
 
@@ -101,7 +104,8 @@ test('Modo 1 jogador: conversas que falam da pescaria de alguém exigem que essa
 
 // ================================================================= quantidade e variedade
 const GRUPO = { captura: 'captura', fracasso: 'fracasso', arremesso: 'arremesso e lagoa', regiao: 'arremesso e lagoa', isca: 'arremesso e lagoa',
-  espera: 'espera', mordida: 'mordida e briga', briga: 'mordida e briga', espontanea: 'conversas', sirius: 'Sirius (choro e sono)', 'sirius-sono': 'Sirius (choro e sono)' };
+  espera: 'espera', mordida: 'mordida e briga', briga: 'mordida e briga', espontanea: 'conversas', retomada: 'conversas', sirius: 'Sirius (choro e sono)', 'sirius-sono': 'Sirius (choro e sono)',
+  mundo: 'mundo e pontos', clima: 'mundo e pontos', ponto: 'mundo e pontos' };
 const tabela = {};
 for (const c of cenas) {
   const g = GRUPO[Narrador.CATEGORIA[c.g]] || 'outros';
@@ -131,12 +135,12 @@ test('Variedade: cenas específicas do modo 1 e do modo 2, e conversas com 3 ou 
 /** Pescaria simulada (2 ou 1 jogador) com jogadores virtuais; o Narrador recebe os eventos reais. */
 function simular(opts) {
   const minutos = opts.minutos || 20;
-  const rb = new Random(opts.semente || 7), rn = new Random((opts.semente || 7) * 13 + 1);
+  const rb = new Random(opts.semente || 7), rn = new Random((opts.semente || 7) * 13 + 1), rc = new Random((opts.semente || 7) * 31 + 5);
   let now = 0;
   const s = new SessaoJogo({ config: createConfig(), seed: opts.semente || 7, now: () => now,
     jogo: { modo: opts.modo || 2, personagens: opts.personagens || { P1: 'alemao', P2: 'ale' }, iscas: { P1: 'minhoca', P2: 'massa' }, regioes: true } });
   const n = opts.semNarrador ? null : new Narrador({ modo: opts.modo || 2, personagens: opts.personagens || { P1: 'alemao', P2: 'ale' }, random: () => rn.next(), dados: Dados });
-  if (n) s.onEvent((e) => n.evento(e, s.players, e.tipo === 'captura' ? { novo: rb.next() < 0.1, recorde: false } : undefined));
+  if (n) s.onEvent((e) => n.evento(e, s.players, e.tipo === 'captura' ? { novo: rc.next() < 0.1, recorde: false } : undefined));
   const ids = (opts.modo || 2) === 1 ? ['P1'] : ['P1', 'P2'];
   const bot = {};
   for (const id of ids) bot[id] = { prox: 500 + rb.next() * 1500, acao: 'idle', estilo: id === 'P1' ? [0.82, 0.35] : [0.9, 0.3] };
@@ -145,14 +149,13 @@ function simular(opts) {
     now += STEP;
     for (const id of ids) {
       const p = s.players[id], b = bot[id];
-      if (now < b.prox) {
-        if (p.state === 'FIGHTING' && b.acao === 'briga') {
-          const [hi, lo] = b.estilo;
-          if (p.pressed && p.tension > hi) p.release(now, {});
-          else if (!p.pressed && p.tension < lo) p.press(now);
-        }
+      if (p.state === 'FIGHTING' && b.acao === 'briga') {
+        const [hi, lo] = b.estilo;
+        if (p.pressed && p.tension > hi) p.release(now, {});
+        else if (!p.pressed && p.tension < lo) p.press(now);
         continue;
       }
+      if (now < b.prox) continue;
       switch (p.state) {
         case 'IDLE':
           if (b.acao === 'carregando') break;
@@ -272,8 +275,7 @@ test('Prioridade: um fracasso INTERROMPE uma conversa espontânea em andamento (
     const antes = n.atual.cena.id;
     n.evento({ tipo: 'estado', jogador: 'P1', de: 'FIGHTING', para: 'LINE_BROKEN' }, players);
     n.evento({ tipo: 'linha-rompida', jogador: 'P1' }, players);
-    if (!n.atual) continue;                                  // a chance de comentar não saiu: tenta outra semente
-    assert.notStrictEqual(n.atual.cena.id, antes);
+    if (!n.atual || n.atual.cena.id === antes) continue;     // a chance de comentar não saiu: tenta outra semente
     assert.strictEqual(n.atual.cena.g, 'rompeu');
     ok = true;
   }
@@ -332,8 +334,120 @@ test('Sirius: dormindo não chora nem pode balbuciar; barulho às vezes acorda; 
   assert.ok(t >= 8000 && t <= 15500, 'choro durou ' + t + ' ms');
 });
 
+// ================================================================= Operação Nova Identidade: mordida, retomada, mundo
+const conversaLonga = (n) => n.cenas.find((c) => c.g === 'silencio' && c.f.length === 4 && !c.q && !c.m && !c.f.some((l) => l[0] === 'sirius'));
+const limpar = (n) => { n.atual = null; n.fimUltima = n.t - 20000; n.inicios = []; n.ultimaPessoa = {}; n.ultimaCategoria = {}; };
+
+test('Mordida: corta a conversa solta em andamento (a pescaria vem primeiro) e guarda o resto', () => {
+  const { n, players, avancar } = narradorSolto(2);
+  n.sirius.estado = 'dormindo'; n.sirius.ate = Infinity;
+  avancar(5000);
+  const conversa = conversaLonga(n);
+  n.forcarCena(conversa.id);
+  avancar(300);
+  assert.ok(n.atual && n.atual.cena.id === conversa.id, 'a conversa não começou');
+  players.P1.state = 'BITE';
+  n.evento({ tipo: 'mordida', jogador: 'P1' }, players);
+  assert.ok(!n.atual || n.atual.cena.id !== conversa.id, 'a conversa continuou depois da mordida');
+  assert.ok(n.retomar && n.retomar.cena.id === conversa.id && n.retomar.proxima === 0, 'não guardou para retomar: ' + JSON.stringify(n.retomar && n.retomar.proxima));
+  const ult = n.registro.filter((r) => r.cena === conversa.id).pop();
+  assert.ok(ult && ult.cortada, 'a fala cortada não ficou marcada');
+});
+
+test('Retomada: quando a calma volta, a conversa cortada continua ("Como eu ia dizendo...")', () => {
+  let ok = false, visto = '';
+  for (let sem = 1; sem <= 10 && !ok; sem++) {
+    const { n, players, avancar } = narradorSolto(sem);
+    n.sirius.estado = 'dormindo'; n.sirius.ate = Infinity;
+    avancar(5000);
+    const conversa = conversaLonga(n);
+    n.forcarCena(conversa.id);
+    avancar(300);
+    n.random = () => 0.01;                                    // a retomada acontece sempre que possível
+    players.P1.state = 'BITE'; n.evento({ tipo: 'mordida', jogador: 'P1' }, players);
+    avancar(800); players.P1.state = 'FIGHTING'; avancar(4000); players.P1.state = 'WAITING';
+    avancar(20000);
+    const ret = n.registro.filter((r) => r.g === 'retomada');
+    visto = JSON.stringify(ret.map((r) => r.pessoa + ': ' + r.texto));
+    ok = ret.length >= 2 && /dizendo|parou|assunto|tava/i.test(ret[0].texto) && ret[1].modelo === conversa.f[0][1];
+  }
+  assert.ok(ok, 'sem retomada: ' + visto);
+});
+
+test('Retomada: depois de 60 s a conversa cortada fica para trás (nada de assunto velho)', () => {
+  const { n, players, avancar } = narradorSolto(4);
+  n.sirius.estado = 'dormindo'; n.sirius.ate = Infinity;
+  avancar(5000);
+  n.forcarCena(conversaLonga(n).id);
+  avancar(300);
+  players.P1.state = 'BITE'; n.evento({ tipo: 'mordida', jogador: 'P1' }, players);
+  players.P1.state = 'FIGHTING'; avancar(65000);                 // briga longa: sem calma
+  players.P1.state = 'WAITING'; avancar(15000);
+  assert.ok(!n.retomar, 'continuou guardada');
+  assert.ok(!n.registro.some((r) => r.g === 'retomada'), 'retomou um assunto de mais de 1 minuto');
+});
+
+test('Fisgada: reação curta logo depois da fala anterior (não espera o intervalo das conversas)', () => {
+  let ok = 0;
+  for (let sem = 1; sem <= 10; sem++) {
+    const { n, players, avancar } = narradorSolto(sem);
+    n.sirius.estado = 'dormindo'; n.sirius.ate = Infinity;
+    avancar(3000);
+    limpar(n); n.fimUltima = n.t - 800;                          // uma fala terminou há 0,8 s
+    n.random = () => 0.01;
+    players.P1.state = 'FIGHTING';
+    n.evento({ tipo: 'fisgada', jogador: 'P1', reacaoMs: 400 }, players);
+    if (n.atual && n.atual.cena.g === 'fisgada') ok++;
+  }
+  assert.strictEqual(ok, 10);
+});
+
+test('Mundo: peixe saltando perto da boia rende comentário; com o Sirius dormindo, ninguém balbucia', () => {
+  let comentou = 0, balbucioDormindo = 0;
+  for (let sem = 1; sem <= 30; sem++) {
+    const { n, players, avancar } = narradorSolto(sem);
+    n.forcarSirius('dormindo'); n.sirius.ate = Infinity;
+    avancar(3000);
+    limpar(n);
+    n.eventoMundo({ tipo: 'salto', perto: 'P1' });
+    if (n.atual && n.atual.cena.g === 'salto') comentou++;
+    avancar(8000);
+    balbucioDormindo += n.registro.filter((r) => r.pessoa === 'sirius' && r.sirius === 'dormindo').length;
+  }
+  assert.ok(comentou >= 8 && comentou <= 25, 'comentários: ' + comentou + ' de 30 (chance de 50 %)');
+  assert.strictEqual(balbucioDormindo, 0);
+});
+
+test('Pontos de interesse: a boia que pousa no ponto rende comentário próprio (no lugar do comentário do lugar)', () => {
+  let ok = 0;
+  for (let sem = 1; sem <= 20; sem++) {
+    const { n, players, avancar } = narradorSolto(sem);
+    n.sirius.estado = 'dormindo'; n.sirius.ate = Infinity;
+    avancar(3000);
+    limpar(n);
+    Object.assign(players.P1, { zona: 'rasa', regiao: 'margem', pontoNaAgua: { tipo: 'bolhas', espera: 0.65 } });
+    n.evento({ tipo: 'boia-na-agua', jogador: 'P1' }, players);
+    if (n.atual && n.atual.cena.g === 'ponto-acerto') ok++;
+  }
+  assert.ok(ok >= 7, ok + ' de 20 (chance de 60 %)');
+});
+
+test('Chuva e entardecer: o narrador sabe que chove e comenta o começo, o fim e o pôr do sol', () => {
+  const { n, players, avancar } = narradorSolto(5);
+  n.sirius.estado = 'dormindo'; n.sirius.ate = Infinity;
+  avancar(3000); limpar(n);
+  n.eventoMundo({ tipo: 'chuva-inicio' });
+  assert.ok(n.chovendo && n.atual && n.atual.cena.g === 'chuva-inicio', 'sem comentário da chuva');
+  avancar(20000); limpar(n);
+  n.eventoMundo({ tipo: 'chuva-fim' });
+  assert.ok(!n.chovendo, 'continua chovendo');
+  avancar(20000); limpar(n);
+  n.eventoMundo({ tipo: 'entardecer' });
+  assert.ok(n.atual && n.atual.cena.g === 'entardecer', 'sem comentário do entardecer');
+});
+
 console.log('\nFalas por personagem e categoria:');
-const gs = ['captura', 'fracasso', 'arremesso e lagoa', 'espera', 'mordida e briga', 'conversas', 'Sirius (choro e sono)'];
+const gs = ['captura', 'fracasso', 'arremesso e lagoa', 'espera', 'mordida e briga', 'conversas', 'Sirius (choro e sono)', 'mundo e pontos'];
 console.log('  ' + 'pessoa'.padEnd(8) + gs.map((g) => g.slice(0, 13).padStart(14)).join('') + '     total');
 for (const p of ['alemao', 'ale', 'maria', 'sirius']) {
   const v = tabela[p] || {};

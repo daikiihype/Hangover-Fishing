@@ -33,7 +33,7 @@
   // ---------------------------------------------------------------- opções
   const OPCOES_PADRAO = {
     volumeGeral: 0.8, volumeEfeitos: 0.8, volumeMusica: 0.5, volumeVozes: 0.7,
-    efeitos: true, musica: true, vozes: true, regioes: true, vibracao: false
+    efeitos: true, musica: true, vozes: true, regioes: true, vibracao: false, dicas: true
   };
 
   class Opcoes {

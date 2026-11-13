@@ -72,6 +72,71 @@
       if (this.ganhoVozes) this.ganhoVozes.gain.setTargetAtTime(this.volumeVozes, this.ctx.currentTime, 0.05);
     }
 
+    // ---------------------------------------------------------------- ambiente do lago (volume dos efeitos)
+    /** Sons do mundo, sintetizados (sem arquivos): respingo do peixe saltando, chuva leve, passarinhos. */
+    ambiente(tipo, ligar) {
+      const pronto = !!(this.ctx && this.master && this.enabled && this.ctx.state === 'running');
+      if (tipo === 'chuva' && !ligar) { this._pararChuva(); return; }
+      if (!pronto) return;
+      try {
+        if (tipo === 'salto') this._respingo();
+        else if (tipo === 'chuva') this._comecarChuva();
+        else if (tipo === 'passaro') this._piu();
+      } catch (e) { /* áudio indisponível: segue sem som */ }
+    }
+
+    _ruidoBuffer() {
+      if (this._ruido) return this._ruido;
+      const ctx = this.ctx, n = Math.floor(ctx.sampleRate * 2), b = ctx.createBuffer(1, n, ctx.sampleRate), d = b.getChannelData(0);
+      let s = 12345;
+      for (let i = 0; i < n; i++) { s = (s * 1103515245 + 12345) & 0x7fffffff; d[i] = (s / 0x7fffffff) * 2 - 1; }
+      this._ruido = b;
+      return b;
+    }
+
+    _respingo() {
+      const ctx = this.ctx, t = ctx.currentTime;
+      const src = ctx.createBufferSource(); src.buffer = this._ruidoBuffer();
+      const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.setValueAtTime(1400, t); f.frequency.exponentialRampToValueAtTime(500, t + 0.25); f.Q.value = 0.9;
+      const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.5, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
+      src.connect(f); f.connect(g); g.connect(this.master);
+      src.start(t, Math.random() * 1.5, 0.35);
+      const o = ctx.createOscillator(), go = ctx.createGain();           // "ploc"
+      o.type = 'sine'; o.frequency.setValueAtTime(260, t); o.frequency.exponentialRampToValueAtTime(110, t + 0.12);
+      go.gain.setValueAtTime(0.0001, t); go.gain.exponentialRampToValueAtTime(0.35, t + 0.01); go.gain.exponentialRampToValueAtTime(0.0001, t + 0.14);
+      o.connect(go); go.connect(this.master); o.start(t); o.stop(t + 0.16);
+    }
+
+    _comecarChuva() {
+      if (this.chuva) return;
+      const ctx = this.ctx, t = ctx.currentTime;
+      const src = ctx.createBufferSource(); src.buffer = this._ruidoBuffer(); src.loop = true;
+      const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 1200;
+      const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 5200;
+      const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.16, t + 2.5);
+      src.connect(hp); hp.connect(lp); lp.connect(g); g.connect(this.master);
+      src.start(t);
+      this.chuva = { src, g };
+    }
+
+    _pararChuva() {
+      const c = this.chuva;
+      if (!c || !this.ctx) { this.chuva = null; return; }
+      const t = this.ctx.currentTime;
+      try { c.g.gain.cancelScheduledValues(t); c.g.gain.setValueAtTime(Math.max(0.0001, c.g.gain.value), t); c.g.gain.exponentialRampToValueAtTime(0.0001, t + 2.5); c.src.stop(t + 2.6); } catch (e) { /* já parou */ }
+      this.chuva = null;
+    }
+
+    _piu() {
+      const ctx = this.ctx, t = ctx.currentTime;
+      for (let i = 0; i < 2; i++) {
+        const o = ctx.createOscillator(), g = ctx.createGain(), t0 = t + i * 0.16;
+        o.type = 'sine'; o.frequency.setValueAtTime(2300, t0); o.frequency.exponentialRampToValueAtTime(3300, t0 + 0.07);
+        g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.08, t0 + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.09);
+        o.connect(g); g.connect(this.master); o.start(t0); o.stop(t0 + 0.1);
+      }
+    }
+
     // ---------------------------------------------------------------- vozes (narrativa)
     _vozesOk() { return !!(this.ctx && this.ctx.state === 'running' && this.ganhoVozes && this.volumeVozes > 0); }
 

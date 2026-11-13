@@ -25,7 +25,7 @@ function check(name, cond, detail) {
   console.log((cond ? '  ✓ ' : '  ✗ ') + name + (cond || !detail ? '' : '  → ' + detail));
 }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-const HF_NOME = { margem: 'MARGEM', aberta: 'ÁGUAS ABERTAS', fundo: 'ÁGUAS PROFUNDAS' };
+const HF_NOME = { margem: 'MARGEM RASA', aberta: 'ÁGUAS ABERTAS', fundo: 'POÇO PROFUNDO' };
 const inter = (a, b) => a && b && a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
 
 (async () => {
@@ -137,7 +137,7 @@ const inter = (a, b) => a && b && a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.
     await clicar('[data-especie="bagre"]');
     const ficha = await page.evaluate(() => { const f = document.getElementById('ficha'); return { aberta: !f.hidden, texto: f.textContent }; });
     await shot('02_ficha_nao_descoberta');
-    check('Ficha (não descoberto): mostra raridade, regiões, iscas recomendadas, melhor chance, dificuldade e dica', ficha.aberta && ['Raridade', 'Regiões', 'Iscas', 'Melhor chance', 'Dificuldade', 'Dica', 'ÁGUAS PROFUNDAS', 'Coração de galinha'].every((w) => ficha.texto.includes(w)), ficha.texto.slice(0, 200));
+    check('Ficha (não descoberto): mostra raridade, regiões, iscas recomendadas, melhor chance, dificuldade e dica', ficha.aberta && ['Raridade', 'Regiões', 'Iscas', 'Melhor chance', 'Dificuldade', 'Dica', 'POÇO PROFUNDO', 'Coração de galinha'].every((w) => ficha.texto.includes(w)), ficha.texto.slice(0, 200));
     await clicar('[data-acao="fechar-ficha"]');
     await clicar('[data-aba="guia"]');
     const guia = await page.evaluate(() => document.getElementById('catalogo-conteudo').textContent);
@@ -200,8 +200,12 @@ const inter = (a, b) => a && b && a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.
     await waitFor((x) => x.P1.state === 'WAITING' && x.P2.state === 'WAITING', 3000, 'boias');
     s = await state();
     check('Arremesso médio = águas abertas, longo = águas profundas (região bate com a distância)', s.P1.regiao === 'aberta' && s.P2.regiao === 'fundo' && s.P1.regiaoCerta && s.P2.regiaoCerta, JSON.stringify([s.P1.distance, s.P1.regiao, s.P2.distance, s.P2.regiao]));
-    const tags = await page.evaluate(() => ['P1', 'P2'].map((id) => ({ v: HF.app.partida.tx[id].regiao.visible, t: HF.app.partida.tx[id].regiao.text })));
-    check('A região aparece escrita na boia ao cair (indicação visual)', tags[0].v && tags[0].t === HF_NOME[s.P1.regiao] && tags[1].v && tags[1].t === HF_NOME[s.P2.regiao], JSON.stringify(tags));
+    // o nome do LUGAR de pouso (Margem Rasa, Baía dos Lírios, Curva das Pedras, Poço Profundo) aparece na boia
+    const tags = await page.evaluate(() => ['P1', 'P2'].map((id) => {
+      const P = HF.app.partida, z = P.session.players[id].zona, t = P.tx[id].regiao.text;
+      return { v: P.tx[id].regiao.visible, t, esperado: z ? HF.DadosPesca.zonaPorId[z].curta : null, noPonto: /NO PONTO/.test(t) };
+    }));
+    check('O lugar de pouso aparece escrito na boia ao cair (indicação visual)', tags.every((x) => x.v && (x.t === x.esperado || x.noPonto)), JSON.stringify(tags));
     await shot('08_boias_em_regioes_diferentes');
 
     // ================= 6. Recolhendo (P1) enquanto o outro está na água; recolher sem peixe =================
@@ -290,15 +294,16 @@ const inter = (a, b) => a && b && a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.
     await down('P1'); await sleep(640); await up('P1');
     await waitFor((x) => x.P1.state === 'WAITING', 3000, 'boia');
     s = await state();
-    const rot = await page.evaluate(() => HF.app.partida.rotulosRegiao.map((t) => t.visible));
-    check('Regiões desligadas (comparação): arremesso longo usa o lago tradicional, sem faixas nem rótulos', s.P1.regiao === null && s.P1.tabela === 'aberta' && s.P1.iscaNaAgua === 'artificial' && rot.every((v) => !v), JSON.stringify([s.P1.regiao, s.P1.tabela, rot]));
+    const rot = await page.evaluate(() => { const P = HF.app.partida; return { etiqueta: P.tx.P1.regiao.visible, pontos: P.contextoDoLago().pontos.length, zona: P.session.players.P1.zona }; });
+    check('Regiões desligadas (comparação): arremesso longo usa o lago tradicional, sem nome de lugar nem pontos de interesse', s.P1.regiao === null && s.P1.tabela === 'aberta' && s.P1.iscaNaAgua === 'artificial' && !rot.etiqueta && rot.pontos === 0 && rot.zona === null, JSON.stringify([s.P1.regiao, s.P1.tabela, rot]));
     await shot('13_regioes_desligadas');
     await clicar('#botao-pausa');
     await clicar('[data-palt="regioes"]');
     await clicar('#tela-pausa [data-acao="continuar"]');
 
     // ================= 11. Diálogo central: não cobre boias, personagens nem cartões =================
-    await page.evaluate(() => { const P = HF.app.partida; P.dialogos.ultimaFala = -1e9; P.dialogos.ultimaPor = {}; P.dialogos.random = () => 0.05; P.dialogos.captura('P1', { id: 'dourado', nome: 'Dourado', pesoKg: 7.5, grande: true, novo: true }); });
+    // atalho de TESTE: um acontecimento importante (dourado novo no catálogo) faz a família falar
+    await page.evaluate(() => { const P = HF.app.partida; P.narrador.random = () => 0.01; P.narrador.evento({ tipo: 'captura', jogador: 'P1', perfil: 'dourado', pesoKg: 7.5 }, P.session.players, { novo: true, recorde: false }); });
     await sleep(500);
     const dl = await page.evaluate(() => {
       const P = HF.app.partida, L = P.L, b = (id) => { const q = P.pl[id].sprite.getBounds(); return { x: q.x + q.width * 0.3, y: q.y + q.height * 0.3, w: q.width * 0.4, h: q.height * 0.7 }; };
@@ -306,7 +311,7 @@ const inter = (a, b) => a && b && a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.
       return { r: P.dlgRect, nome: P.dlg.nome.text, texto: P.dlg.texto.text, corpos: P.ids.map(b), boias, W: L.W };
     });
     await shot('14_dialogo_central');
-    check('Diálogo central aparece com nome de quem fala e texto', dl.r && /ALEMÃO|ALE/.test(dl.nome) && dl.texto.length > 3, JSON.stringify([dl.nome, dl.texto]));
+    check('Diálogo central aparece com nome de quem fala e texto', dl.r && /ALEMÃO|ALE|MARIA|SIRIUS/.test(dl.nome) && dl.texto.length > 1, JSON.stringify([dl.nome, dl.texto]));
     check('Diálogo não cobre as colunas das boias nem os personagens', dl.r && !dl.boias.some((q) => inter(dl.r, q)) && !dl.corpos.some((q) => inter(dl.r, q)), JSON.stringify({ r: dl.r, boias: dl.boias }));
 
     // ================= 12. Uma captura garantida para o catálogo (se ainda não houve) =================

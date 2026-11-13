@@ -1,4 +1,8 @@
 /*
+ * [SUBSTITUÍDO — Operação "A alma do jogo", 12/11/2026] Este diretor simples não é mais
+ * carregado pelo jogo: a partida usa a camada narrativa em src/narrativa/ (Narrador, Sirius
+ * e as falas em arquivos de dados). Mantido sem uso só como histórico (não foi apagado).
+ *
  * Hangover Fishing — versão jogável
  * Dialogos: decide QUANDO um personagem fala e O QUÊ. Sem Phaser (testável no Node).
  *

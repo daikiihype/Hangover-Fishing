@@ -15,19 +15,23 @@
  *        pescador, ex.: 'FIGHTING'), c (true = cena do choro: a Maria pode falar)
  *
  * Marcadores no texto: {peixe} {Peixe} {um} {o} {kg} {m} {isca} {regiao} {placar}
+ *   {zona} (o lugar do lago: "Margem Rasa", "Baía dos Lírios", "Curva das Pedras", "Poço Profundo")
  *   {vocS}/{vocO} (como a Maria chama o pescador: "Lucas" ou "pai")
  *   {balbucio:humor} — balbucio do Sirius (feliz, curioso, protesto, surpresa, bobo, sono, choro)
  *
- * Cânone (GDD 2.4 e missão "A alma do jogo"): ALE chama Lucas de "Alemão" e Maria de
- * "Maria"; Maria chama Lucas de "Lucas" e ALE de "pai"; todos chamam Sirius de "Sirius";
- * o Lucas não usa vocativo para ALE nem para Maria (ainda não definido no GDD).
+ * Cânone (GDD 2.4, missão "A alma do jogo" e Operação Nova Identidade): ALE chama Lucas de
+ * "Alemão" e Maria de "Maria"; Maria chama Lucas de "Lucas" e ALE de "pai" (ou "ALE", quando
+ * soa natural); Lucas chama Maria de "Maria"; todos chamam Sirius de "Sirius".
+ * Como o Lucas chama o ALE ainda não está definido: ele não usa vocativo para o ALE.
  */
 (function (root) {
   'use strict';
 
   const PRIORIDADE_PADRAO = {
     'sirius-inquieto': 1, 'sirius-chorando': 1, 'sirius-acalmando': 1, 'sirius-acalmou': 2,
-    fuga: 3, rompeu: 3, perdida: 3, objeto: 4, silencio: 6
+    fuga: 3, rompeu: 3, perdida: 3, objeto: 4, silencio: 6,
+    // Operação Nova Identidade
+    'ponto-acerto': 4, 'chuva-inicio': 4, entardecer: 4
   };
 
   const Falas = {
