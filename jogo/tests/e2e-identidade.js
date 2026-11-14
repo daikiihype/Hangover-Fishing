@@ -173,12 +173,13 @@ const PARAR_ROBO = () => { clearInterval(window.__robo); window.__robo = null; }
     }, filtro);
     await page.evaluate(() => HF.app.partida.narrador.forcarSirius('acordado'));
     await sleep(300);
-    await forcar({ quem: 'ale' }); await sleep(1300); await shot('11_dialogo_ale');
-    const dAle = await page.evaluate(() => ({ nome: HF.app.partida.caixa.nome.text, ret: HF.app.partida.caixa.retrato.texture.key }));
-    await forcar({ quem: 'maria' }); await sleep(1300); await shot('12_dialogo_maria');
-    const dMaria = await page.evaluate(() => ({ nome: HF.app.partida.caixa.nome.text, ret: HF.app.partida.caixa.retrato.texture.key }));
-    await forcar({ sirius: true }); await sleep(500); await shot('13_sirius_acordado');
-    const dSirius = await page.evaluate(() => ({ nome: HF.app.partida.caixa.nome.text, ret: HF.app.partida.caixa.retrato.texture.key }));
+    // lê a caixa logo depois de ela desenhar a fala forçada (2 quadros): uma mordida que chegue depois
+    // pode cortar a conversa (regra nova), o que é certo no jogo, mas não deve atrapalhar esta verificação
+    const lerCaixa = () => page.evaluate(() => new Promise((res) => requestAnimationFrame(() => requestAnimationFrame(() =>
+      res({ nome: HF.app.partida.caixa.nome.text, ret: HF.app.partida.caixa.retrato.texture.key })))));
+    await forcar({ quem: 'ale' }); const dAle = await lerCaixa(); await sleep(1100); await shot('11_dialogo_ale');
+    await forcar({ quem: 'maria' }); const dMaria = await lerCaixa(); await sleep(1100); await shot('12_dialogo_maria');
+    await forcar({ sirius: true }); const dSirius = await lerCaixa(); await sleep(400); await shot('13_sirius_acordado');
     check('Diálogos: retrato e nome certos para ALE, Maria e Sirius (um por vez)', /^ALE/.test(dAle.nome) && /^rosto_ale_/.test(dAle.ret) && /^MARIA/.test(dMaria.nome) && /^rosto_maria_/.test(dMaria.ret) && /SIRIUS/.test(dSirius.nome) && /balbuciando/.test(dSirius.nome) && /^rosto_sirius_/.test(dSirius.ret), JSON.stringify([dAle, dMaria, dSirius]));
     await sleep(2500);
     await page.evaluate(() => { const n = HF.app.partida.narrador; n.forcarSirius('dormindo'); const c = n.cenas.find((x) => x.g === 'sirius-dormiu'); n.forcarCena(c.id); });

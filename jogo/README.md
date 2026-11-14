@@ -23,6 +23,11 @@ O P0, o P1 e o P1 com personagens continuam intactos e acessíveis em `prototipo
 
 ## Como abrir
 
+### Pela internet (GitHub Pages), depois de publicado
+- **https://daikiihype.github.io/Hangover-Fishing/** abre o jogo direto. A raiz redireciona para `jogo/`.
+- Funciona no computador e no celular, sem servidor, Python ou Node.
+- Como publicar e atualizar: ver **Publicar no GitHub Pages**, mais abaixo.
+
 ### No computador (Windows)
 1. Dê dois cliques em **`iniciar-jogo.bat`**, na pasta do projeto. Ele inicia um servidor local, mostra os endereços e abre o jogo no navegador.
 2. Ou, manualmente, num terminal **na pasta do projeto** (`Hangover Fishing`):
@@ -174,6 +179,41 @@ node jogo/tests/e2e-identidade.js <pasta-de-saida> http://127.0.0.1:8765/jogo/in
   - `docs/RELATORIO_OPERACAO_MADRUGADA.md` (jogo);
   - `docs/RELATORIO_SISTEMA_DIALOGOS.md` (diálogos, Maria e Sirius);
   - `docs/RELATORIO_OPERACAO_NOVA_IDENTIDADE.md` (cenário, HUD, lugares, pontos de interesse, vida no lago).
+
+## Publicar no GitHub Pages
+O site é o **repositório inteiro**, publicado a partir da raiz da branch `main`. O jogo usa arquivos de fora de `jogo/`:
+- `../prototipos/p1-pesca`: Phaser e lógica;
+- `../arte/`: spritesheets;
+- as folhas `.jpg` da raiz.
+
+Por isso nada pode ser movido nem deixado de fora. Todos os caminhos são relativos e funcionam no subcaminho `/Hangover-Fishing/`.
+
+**1. Commit e envio (GitHub Desktop):**
+- confira que todas as alterações estão marcadas, inclusive os arquivos novos;
+- faça "Commit to **main**" e depois "**Push origin**".
+
+**2. Ativar o Pages** (só na primeira vez), no github.com, no repositório `daikiihype/Hangover-Fishing`:
+- **Settings → Pages → Build and deployment → Source: "Deploy from a branch" → Branch: `main`, pasta `/ (root)` → Save**;
+- em 1 a 3 minutos o site fica em **https://daikiihype.github.io/Hangover-Fishing/**;
+- o andamento aparece em **Actions** ("pages build and deployment").
+
+**3. Atualizar:** é só fazer commit e push de novo. O Pages pode guardar a versão anterior por até ~10 minutos (cache). Se algo parecer velho, recarregue a página.
+
+**Arquivos de publicação na raiz:**
+
+| Arquivo | Para quê |
+|---|---|
+| `index.html` | leva ao jogo e mantém parâmetros como `?entardecer=1` |
+| `.nojekyll` | o Pages publica os arquivos como estão, sem o processador Jekyll |
+
+**Testar antes de publicar**, simulando o Pages no computador (subcaminho, maiúsculas e minúsculas, só arquivos do repositório):
+```
+node jogo/tests/servidor-pages.js 8790
+node jogo/tests/e2e-publicacao.js <pasta-de-saida> http://127.0.0.1:8790/Hangover-Fishing/
+```
+Com o simulador ligado, os outros testes de navegador também podem usar o endereço `http://127.0.0.1:8790/Hangover-Fishing/jogo/index.html`. Assim eles conferem o jogo no subcaminho.
+
+Detalhes, testes e limitações: `docs/RELATORIO_PREPARACAO_PUBLICACAO.md`.
 
 ## Parâmetros opcionais no endereço
 - `?seed=1234`: sorteios repetíveis (testes).
